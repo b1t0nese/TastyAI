@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>TastyAI - Умные тесты для всех</title>
+  <link rel="stylesheet" href="static/css/styles-index.css">
+  <link rel="icon" href="static/images/favicon.ico">
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&family=Playfair+Display:wght@400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+  <!-- Хедер -->
+  <header class="header">
+    <div class="container flex h-16 items-center justify-between">
+      <a href="/" class="flex items-center gap-2 animate-fade-in">
+        <span class="text-2xl font-bold">
+          <span class="text-tasty">Tasty</span><span>AI</span>
+        </span>
+      </a>
+      
+      <!-- Поисковая строка -->
+      <div class="hidden md:flex relative max-w-sm items-center animate-fade-in">
+        <input
+          type="text"
+          placeholder="Поиск тестов..."
+          id="searchField"
+          onkeydown="handleEnter(event)"
+          class="w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 pr-10"
+        >
+      </div>
+      <script>
+        function handleEnter(event) {
+          if (event.key === "Enter") {
+            const searchQuery = document.getElementById("searchField").value;
+            if (searchQuery) {
+              window.location.href = `tests?search_query=${encodeURIComponent(searchQuery)}`;
+            }
+          }
+        }
+      </script>
+      
+      <!-- Навигация -->
+      <nav class="hidden md:flex items-center gap-1 animate-fade-in">
+        <a href="tests" class="nav-link">Готовые тесты</a>
+        <a href="create_test" class="nav-link">Создать тест</a>
+        <a href="sign">
+          <button class="ml-2 border-tasty text-tasty hover:bg-tasty hover:text-white btn btn-outline">
+            {{ username }}
+          </button>
+        </a>
+      </nav>
+      
+      <!-- Мобильное меню -->
+      <button class="md:hidden menu-button">
+        <span class="menu-icon">☰</span>
+      </button>
+    </div>
+    
+    <!-- Мобильное меню (скрыто по умолчанию) -->
+    <div class="mobile-menu md:hidden animate-fade-in" style="display: none;">
+      <div class="container py-4 flex flex-col gap-4">
+        <form class="flex relative items-center">
+          <input
+            type="text"
+            placeholder="Поиск тестов..."
+            class="w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 pr-10"
+          >
+          <button type="submit" class="absolute right-3 text-muted-foreground hover:text-foreground">
+            <span class="search-icon">🔍</span>
+          </button>
+        </form>
+        
+        <nav class="flex flex-col items-start gap-3">
+          <a href="tests" class="text-lg font-medium">Готовые тесты</a>
+          <a href="create_test" class="text-lg font-medium">Создать тест</a>
+          <a href="sign">
+            <button class="w-full bg-tasty hover:bg-tasty-dark text-white btn btn-primary">
+              {{ username }}
+            </button>
+          </a>
+        </nav>
+      </div>
+    </div>
+  </header>
+
+  <main class="flex-1">
+    <!-- Герой-секция -->
+    <section class="hero py-16 md:py-24">
+      <div class="container px-4 md:px-6 flex flex-col md:flex-row items-center gap-10">
+        <div class="hero-content md:w-1/2 animate-fade-in">
+          <h1 class="text-4xl md:text-5xl lg:text-6xl font-bold mb-6">
+            Создавайте интересные тесты с помощью <span class="text-tasty">TastyAI</span>
+          </h1>
+          <p class="text-lg md:text-xl text-muted-foreground mb-8">
+            Наш сервис поможет вам создавать увлекательные тесты для обучения, развлечения и оценки знаний. Благодаря искусственному интеллекту процесс создания тестов становится легким и быстрым.
+          </p>
+          <div class="flex flex-col sm:flex-row gap-4">
+            <a href="create_test" class="btn btn-primary text-center">
+              Создать тест
+            </a>
+            <a href="tests.html" class="btn btn-outline text-center">
+              Готовые тесты
+            </a>
+          </div>
+        </div>
+        
+        <div class="hero-image md:w-1/2 animate-scale-in">
+          <img src="static/images/hero-image.svg" alt="TastyAI" class="w-full max-w-md mx-auto">
+        </div>
+      </div>
+    </section>
+    
+    <!-- Особенности -->
+    <section class="features py-16 bg-secondary/30">
+      <div class="container px-4 md:px-6">
+        <div class="text-center mb-12 animate-fade-in">
+          <h2 class="text-3xl md:text-4xl font-bold mb-4">Почему стоит выбрать TastyAI?</h2>
+          <p class="text-lg text-muted-foreground max-w-3xl mx-auto">
+            Наш сервис предлагает множество уникальных возможностей, которые делают создание и прохождение тестов простым и приятным опытом.
+          </p>
+        </div>
+        
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          <div class="feature-card p-6 bg-card rounded-lg shadow-sm animate-fade-in">
+            <div class="feature-icon mb-4">
+              <span class="text-4xl text-tasty">🧠</span>
+            </div>
+            <h3 class="text-xl font-bold mb-2">Умные тесты</h3>
+            <p class="text-muted-foreground">
+              Искусственный интеллект автоматически создает разнообразные вопросы на основе выбранной темы и сложности.
+            </p>
+          </div>
+          
+          <div class="feature-card p-6 bg-card rounded-lg shadow-sm animate-fade-in" style="animation-delay: 0.1s">
+            <div class="feature-icon mb-4">
+              <span class="text-4xl text-tasty">⚡</span>
+            </div>
+            <h3 class="text-xl font-bold mb-2">Быстрое создание</h3>
+            <p class="text-muted-foreground">
+              Всего несколько кликов, и ваш тест готов! Не нужно тратить часы на составление вопросов.
+            </p>
+          </div>
+          
+          <div class="feature-card p-6 bg-card rounded-lg shadow-sm animate-fade-in" style="animation-delay: 0.2s">
+            <div class="feature-icon mb-4">
+              <span class="text-4xl text-tasty">📊</span>
+            </div>
+            <h3 class="text-xl font-bold mb-2">Подробная статистика</h3>
+            <p class="text-muted-foreground">
+              Получайте детальную информацию о результатах прохождения тестов и анализируйте эффективность обучения.
+            </p>
+          </div>
+          
+          <div class="feature-card p-6 bg-card rounded-lg shadow-sm animate-fade-in" style="animation-delay: 0.3s">
+            <div class="feature-icon mb-4">
+              <span class="text-4xl text-tasty">🔄</span>
+            </div>
+            <h3 class="text-xl font-bold mb-2">Гибкая настройка</h3>
+            <p class="text-muted-foreground">
+              Настраивайте параметры теста под свои требования: количество вопросов, типы ответов и многое другое.
+            </p>
+          </div>
+          
+          <div class="feature-card p-6 bg-card rounded-lg shadow-sm animate-fade-in" style="animation-delay: 0.5s">
+            <div class="feature-icon mb-4">
+              <span class="text-4xl text-tasty">📱</span>
+            </div>
+            <h3 class="text-xl font-bold mb-2">Доступ с любого устройства</h3>
+            <p class="text-muted-foreground">
+              Создавайте и проходите тесты на компьютере, планшете или смартфоне — в любое время и в любом месте.
+            </p>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <script src="static/js/index.js"></script>
+</body>
+</html>

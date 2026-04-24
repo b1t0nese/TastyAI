@@ -1,0 +1,206 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Авторизация - TastyAI</title>
+  <link rel="stylesheet" href="static/css/styles-auth.css">
+  <link rel="icon" href="static/images/favicon.ico">
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&family=Playfair+Display:wght@400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+  <!-- Хедер -->
+  <header class="header">
+    <div class="container flex h-16 items-center justify-between">
+      <a href="/" class="flex items-center gap-2 animate-fade-in">
+        <span class="text-2xl font-bold">
+          <span class="text-tasty">Tasty</span><span>AI</span>
+        </span>
+      </a>
+      
+      <!-- Навигация -->
+      <nav class="hidden md:flex items-center gap-1 animate-fade-in">
+        <a href="tests" class="nav-link">Готовые тесты</a>
+        <a href="create_test" class="nav-link">Создать тест</a>
+        <a href="sign">
+          <button class="ml-2 bg-tasty border-tasty text-white hover:bg-tasty-dark btn btn-primary">
+            Авторизация
+          </button>
+        </a>
+      </nav>
+      
+      <!-- Мобильное меню -->
+      <button class="md:hidden menu-button">
+        <span class="menu-icon">☰</span>
+      </button>
+    </div>
+    
+    <!-- Мобильное меню (скрыто по умолчанию) -->
+    <div class="mobile-menu md:hidden animate-fade-in" style="display: none;">
+      <div class="container py-4 flex flex-col gap-4">
+        <form class="flex relative items-center">
+          <input
+            type="text"
+            placeholder="Поиск тестов..."
+            class="w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 pr-10"
+          >
+          <button type="submit" class="absolute right-3 text-muted-foreground hover:text-foreground">
+            <span class="search-icon">🔍</span>
+          </button>
+        </form>
+        
+        <nav class="flex flex-col items-start gap-3">
+          <a href="tests" class="text-lg font-medium">Готовые тесты</a>
+          <a href="create-test" class="text-lg font-medium">Создать тест</a>
+          <a href="sign">
+            <button class="w-full bg-tasty hover:bg-tasty-dark text-white btn btn-primary">
+              Авторизация
+            </button>
+          </a>
+        </nav>
+      </div>
+    </div>
+  </header>
+
+  <main class="flex-1">
+    <section class="py-10">
+      <div class="container px-4 md:px-6">
+        <div class="max-w-md mx-auto bg-card rounded-lg shadow-md overflow-hidden animate-fade-in">
+          <!-- Табы авторизации -->
+          <div class="auth-tabs">
+            <div class="auth-tab active" data-tab="login">Вход</div>
+            <div class="auth-tab" data-tab="register">Регистрация</div>
+          </div>
+          
+          <!-- Содержимое табов -->
+          <div class="p-6">
+            <!-- Таб "Вход" -->
+            <div class="tab-content active" id="login-tab">
+              <h2 class="text-2xl font-bold mb-4">Войти в аккаунт</h2>
+              <p class="text-muted-foreground mb-6">
+                Введите свои данные для входа в систему
+              </p>
+              
+              <form class="space-y-4" method="post" action="{{ url_for('sign') }}?type=auth">
+                <div>
+                  <label for="username_auth" class="block text-sm font-medium mb-1">
+                    Имя
+                  </label>
+                  <input
+                    type="text"
+                    id="username_auth"
+                    name="username_auth"
+                    class="w-full rounded-md border border-input bg-background px-3 py-2 text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+                    placeholder="Ваше имя"
+                  />
+                </div>
+                
+                <div>
+                  <label for="password_auth" class="block text-sm font-medium mb-1">
+                    Пароль
+                  </label>
+                  <input
+                    type="password"
+                    id="password_auth"
+                    name="password_auth"
+                    class="w-full rounded-md border border-input bg-background px-3 py-2 text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+                    placeholder="••••••••"
+                  />
+                </div>
+                
+                <div class="flex items-center justify-between">
+                  <a href="#" class="text-sm text-tasty hover:underline">Забыли пароль?</a>
+                </div>
+                
+                <button type="submit" class="w-full bg-tasty hover:bg-tasty-dark text-white btn btn-primary py-2">
+                  Войти
+                </button>
+                
+                <div class="text-center mt-4">
+                  <p class="text-sm text-muted-foreground">
+                    Нет аккаунта?
+                    <a href="#" class="text-tasty hover:underline auth-switch" data-target="register">Зарегистрироваться</a>
+                  </p>
+                  {% if error %}
+                    <text style="color: red;" id="auth_error_message">{{ error }}</text>
+                  {% endif %}
+                </div>
+              </form>
+            </div>
+            
+            <!-- Таб "Регистрация" -->
+            <div class="tab-content" id="register-tab" style="display: none;">
+              <h2 class="text-2xl font-bold mb-4">Создать аккаунт</h2>
+              <p class="text-muted-foreground mb-6">
+                Зарегистрируйтесь, чтобы получить доступ ко всем функциям платформы
+              </p>
+              
+              <form method="post" action="{{ url_for('sign') }}?type=reg" class="space-y-4">
+                <div>
+                  <label for="username_reg" class="block text-sm font-medium mb-1">
+                    Имя
+                  </label>
+                  <input
+                    type="text"
+                    id="username_reg"
+                    name="username_reg"
+                    class="w-full rounded-md border border-input bg-background px-3 py-2 text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+                    placeholder="Ваше имя"
+                  />
+                </div>
+
+                <div>
+                  <label for="password_reg" class="block text-sm font-medium mb-1">
+                    Пароль
+                  </label>
+                  <input
+                    type="password"
+                    id="password_reg"
+                    name="password_reg"
+                    class="w-full rounded-md border border-input bg-background px-3 py-2 text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+                    placeholder="••••••••"
+                  />
+                </div>
+                
+                <div>
+                  <label for="password_again" class="block text-sm font-medium mb-1">
+                    Подтверждение пароля
+                  </label>
+                  <input
+                    type="password"
+                    id="password_again"
+                    name="password_again"
+                    class="w-full rounded-md border border-input bg-background px-3 py-2 text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+                    placeholder="••••••••"
+                  />
+                </div>
+                
+                <label for="policy_check" class="flex items-center">
+                  <input type="checkbox" name="policy_check" id="policy_check" class="mr-2" />
+                  <span class="text-sm">Я согласен с <a class="text-tasty hover:underline">условиями использования</a></span>
+                </label>
+                
+                <button type="submit" class="w-full bg-tasty hover:bg-tasty-dark text-white btn btn-primary py-2">
+                  Зарегистрироваться
+                </button>
+                
+                <div class="text-center mt-4">
+                  <p class="text-sm text-muted-foreground">
+                    Уже есть аккаунт?
+                    <a href="#" class="text-tasty hover:underline auth-switch" data-target="login">Войти</a>
+                  </p>
+                  {% if error %}
+                    <text style="color: red;" id="reg_error_message">{{ error }}</text>
+                  {% endif %}
+                </div>
+              </form>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <script src="static/js/auth.js"></script>
+</body>
+</html>
