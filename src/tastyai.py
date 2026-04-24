@@ -1,14 +1,15 @@
 from flask import Flask, request, redirect, render_template, jsonify
-from gradio_client import Client
-import os, json, traceback
-USERS_JSON_PATH = 'users.json'
-TESTS_JSON_PATH = 'tests.json'
+# from gradio_client import Client
+import os, json
+SCRIPT_PATH = os.path.dirname(__file__)
+USERS_JSON_PATH = os.path.join(SCRIPT_PATH, 'db', 'users.json')
+TESTS_JSON_PATH = os.path.join(SCRIPT_PATH, 'db', 'tests.json')
 with open(USERS_JSON_PATH, 'r') as f:
     users = json.load(f)
 chatgpt_prompt ="Тебе дают решёный тест, ты должна написать вывод на основе ответов пользователя. Анализируй каждый вопрос обязательно, правильный ответ на него и ответ пользователя. Ответ пользователя неможет отличаться от правильного ответа специальными символами или словами. Отвечай только на том языке на котором были ответы пользователя. "
-client = Client("junu3343/ChatGPT")
+# client = Client("junu3343/ChatGPT")
 
-app = Flask(__name__, template_folder=os.path.abspath('templates'))
+app = Flask(__name__, template_folder=os.path.join(SCRIPT_PATH, 'templates'))
 auth_users = {}
 
 
@@ -26,12 +27,12 @@ def check_auth(ip):
 
 @app.route("/")
 def hello():
-    return render_template('index.html', username=check_auth(request.headers.get('X-Forwarded-For').split(',')[0].strip()))
+    return render_template('index.html', username=check_auth(request.headers.get('X-Forwarded-For', "").split(',')[0].strip()))
 
 
 @app.route("/tests")
 def ready_tests():
-    return render_template('tests.html', username=check_auth(request.headers.get('X-Forwarded-For').split(',')[0].strip()))
+    return render_template('tests.html', username=check_auth(request.headers.get('X-Forwarded-For', "").split(',')[0].strip()))
 
 
 @app.route("/get_tests")
@@ -73,8 +74,8 @@ def sign():
             else:
                 users[username] = (password, request.remote_addr)
                 auth_users[username] = request.remote_addr
-                auth_users[request.headers.get('X-Forwarded-For').split(',')[0].strip()] = username
-                return render_template('index.html', username=check_auth(request.headers.get('X-Forwarded-For').split(',')[0].strip()))
+                auth_users[request.headers.get('X-Forwarded-For', "").split(',')[0].strip()] = username
+                return render_template('index.html', username=check_auth(request.headers.get('X-Forwarded-For', "").split(',')[0].strip()))
 
         elif request_type == 'reg':
             username = request.form['username_reg']
@@ -95,10 +96,10 @@ def sign():
                     users[username] = password
                     f.seek(0)
                     json.dump(users, f)
-                auth_users[request.headers.get('X-Forwarded-For').split(',')[0].strip()] = username
-                return render_template('index.html', username=check_auth(request.headers.get('X-Forwarded-For').split(',')[0].strip()))
+                auth_users[request.headers.get('X-Forwarded-For', "").split(',')[0].strip()] = username
+                return render_template('index.html', username=check_auth(request.headers.get('X-Forwarded-For', "").split(',')[0].strip()))
 
-    if not request.headers.get('X-Forwarded-For').split(',')[0].strip() in auth_users.keys():
+    if not request.headers.get('X-Forwarded-For', "").split(',')[0].strip() in auth_users.keys():
         return render_template('auth.html')
     else:
         referrer = request.headers.get('Referrer')
@@ -131,17 +132,17 @@ def test_solution():
             if question[1] == user_answer:
                 balls += 1
             questions[f"id:{i}"] = {"question": question[0], "user_answer": user_answer, "true_answer": question[1]}
-        result = client.predict(
-                message=questions,
-                system_message=chatgpt_prompt+test["prompt"],
-                max_tokens=1024,
-                temperature=0.7,
-                top_p=0.95,
-                api_name="/chat")
+        # result = client.predict(
+        #         message=questions,
+        #         system_message=chatgpt_prompt+test["prompt"],
+        #         max_tokens=1024,
+        #         temperature=0.7,
+        #         top_p=0.95,
+        #         api_name="/chat")
+        result = "net"
         return jsonify({'result': result, 'balls': balls, 'questions': questions}, 200)
     else:
-        return render_template('solve-test.html',
-                               username=check_auth(request.headers.get('X-Forwarded-For').split(',')[0].strip()))
+        return render_template('solve-test.html', username=check_auth(request.headers.get('X-Forwarded-For', "").split(',')[0].strip()))
 
 
 @app.route('/create_test', methods=['GET', 'POST'])
@@ -150,8 +151,7 @@ def create_test():
         test_directory = request.args.get('test')
         test = request.get_json()['test']
     else:
-        return render_template('create-test.html',
-                               username=check_auth(request.headers.get('X-Forwarded-For').split(',')[0].strip()))
+        return render_template('create-test.html', username=check_auth(request.headers.get('X-Forwarded-For', "").split(',')[0].strip()))
 
 
 if __name__ == "__main__":
