@@ -1,86 +1,10 @@
-<!DOCTYPE html>
-<html lang="ru">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Прохождение теста - TastyAI</title>
-  <link rel="stylesheet" href="static/css/styles-solve-test.css">
-  <link rel="icon" href="static/images/favicon.ico">
-  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&family=Playfair+Display:wght@400;500;600;700&display=swap" rel="stylesheet">
-</head>
-<body>
-  <!-- Хедер -->
-  <header class="header">
-    <div class="container flex h-16 items-center justify-between">
-      <a href="/" class="flex items-center gap-2 animate-fade-in">
-        <span class="text-2xl font-bold">
-          <span class="text-tasty">Tasty</span><span>AI</span>
-        </span>
-      </a>
-      
-      <!-- Поисковая строка -->
-      <input
-        type="text"
-        placeholder="Поиск тестов..."
-        id="searchField"
-        onkeydown="handleEnter(event)"
-        class="w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 pr-10"
-      >
-      <script>
-        function handleEnter(event) {
-          if (event.key === "Enter") {
-            const searchQuery = document.getElementById("searchField").value;
-            if (searchQuery) {
-              window.location.href = `tests?search_query=${encodeURIComponent(searchQuery)}`;
-            }
-          }
-        }
-      </script>
-      
-      <!-- Навигация -->
-      <nav class="hidden md:flex items-center gap-1 animate-fade-in">
-        <a href="tests" class="nav-link">Готовые тесты</a>
-        <a href="create_test" class="nav-link">Создать тест</a>
-        <a href="sign">
-          <button class="ml-2 border-tasty text-tasty hover:bg-tasty hover:text-white btn btn-outline">
-            {{ username }}
-          </button>
-        </a>
-      </nav>
-      
-      <!-- Мобильное меню -->
-      <button class="md:hidden menu-button">
-        <span class="menu-icon">☰</span>
-      </button>
-    </div>
-    
-    <!-- Мобильное меню (скрыто по умолчанию) -->
-    <div class="mobile-menu md:hidden animate-fade-in" style="display: none;">
-      <div class="container py-4 flex flex-col gap-4">
-        <form class="flex relative items-center">
-          <input
-            type="text"
-            placeholder="Поиск тестов..."
-            class="w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 pr-10"
-          >
-          <button type="submit" class="absolute right-3 text-muted-foreground hover:text-foreground">
-            <span class="search-icon">🔍</span>
-          </button>
-        </form>
-        
-        <nav class="flex flex-col items-start gap-3">
-          <a href="tests" class="text-lg font-medium">Готовые тесты</a>
-          <a href="create_test" class="text-lg font-medium">Создать тест</a>
-          <a href="sign">
-            <button class="w-full bg-tasty hover:bg-tasty-dark text-white btn btn-primary">
-              {{ username }}
-            </button>
-          </a>
-        </nav>
-      </div>
-    </div>
-  </header>
+{% extends "base.html" %}
 
+{% block title %}TastyAI - Прохождение теста{% endblock %}
+{% block stylesheet %}<link rel="stylesheet" href="static/css/styles-solve-test.css">{% endblock %}
+{% block navbar %}{% endblock %}
+
+{% block content %}
   <main class="flex-1">
     <section class="py-8">
       <div class="container px-4 md:px-6">
@@ -180,5 +104,4 @@
   </main>
 
   <script src="static/js/solve-test.js"></script>
-</body>
-</html>
+{% endblock %}

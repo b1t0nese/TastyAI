@@ -1,67 +1,10 @@
-<!DOCTYPE html>
-<html lang="ru">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Авторизация - TastyAI</title>
-  <link rel="stylesheet" href="static/css/styles-auth.css">
-  <link rel="icon" href="static/images/favicon.ico">
-  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&family=Playfair+Display:wght@400;500;600;700&display=swap" rel="stylesheet">
-</head>
-<body>
-  <!-- Хедер -->
-  <header class="header">
-    <div class="container flex h-16 items-center justify-between">
-      <a href="/" class="flex items-center gap-2 animate-fade-in">
-        <span class="text-2xl font-bold">
-          <span class="text-tasty">Tasty</span><span>AI</span>
-        </span>
-      </a>
-      
-      <!-- Навигация -->
-      <nav class="hidden md:flex items-center gap-1 animate-fade-in">
-        <a href="tests" class="nav-link">Готовые тесты</a>
-        <a href="create_test" class="nav-link">Создать тест</a>
-        <a href="sign">
-          <button class="ml-2 bg-tasty border-tasty text-white hover:bg-tasty-dark btn btn-primary">
-            Авторизация
-          </button>
-        </a>
-      </nav>
-      
-      <!-- Мобильное меню -->
-      <button class="md:hidden menu-button">
-        <span class="menu-icon">☰</span>
-      </button>
-    </div>
-    
-    <!-- Мобильное меню (скрыто по умолчанию) -->
-    <div class="mobile-menu md:hidden animate-fade-in" style="display: none;">
-      <div class="container py-4 flex flex-col gap-4">
-        <form class="flex relative items-center">
-          <input
-            type="text"
-            placeholder="Поиск тестов..."
-            class="w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 pr-10"
-          >
-          <button type="submit" class="absolute right-3 text-muted-foreground hover:text-foreground">
-            <span class="search-icon">🔍</span>
-          </button>
-        </form>
-        
-        <nav class="flex flex-col items-start gap-3">
-          <a href="tests" class="text-lg font-medium">Готовые тесты</a>
-          <a href="create-test" class="text-lg font-medium">Создать тест</a>
-          <a href="sign">
-            <button class="w-full bg-tasty hover:bg-tasty-dark text-white btn btn-primary">
-              Авторизация
-            </button>
-          </a>
-        </nav>
-      </div>
-    </div>
-  </header>
+{% extends "base.html" %}
 
+{% block title %}TastyAI - Авторизация{% endblock %}
+{% block stylesheet %}<link rel="stylesheet" href="static/css/styles-auth.css">{% endblock %}
+{% block navbar %}{% endblock %}
+
+{% block content %}
   <main class="flex-1">
     <section class="py-10">
       <div class="container px-4 md:px-6">
@@ -202,5 +145,4 @@
   </main>
 
   <script src="static/js/auth.js"></script>
-</body>
-</html>
+{% endblock %}

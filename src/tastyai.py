@@ -1,13 +1,13 @@
 from flask import Flask, request, redirect, render_template, jsonify
-# from gradio_client import Client
 import os, json
 SCRIPT_PATH = os.path.dirname(__file__)
 USERS_JSON_PATH = os.path.join(SCRIPT_PATH, 'db', 'users.json')
 TESTS_JSON_PATH = os.path.join(SCRIPT_PATH, 'db', 'tests.json')
+
 with open(USERS_JSON_PATH, 'r') as f:
     users = json.load(f)
+
 chatgpt_prompt ="Тебе дают решёный тест, ты должна написать вывод на основе ответов пользователя. Анализируй каждый вопрос обязательно, правильный ответ на него и ответ пользователя. Ответ пользователя неможет отличаться от правильного ответа специальными символами или словами. Отвечай только на том языке на котором были ответы пользователя. "
-# client = Client("junu3343/ChatGPT")
 
 app = Flask(__name__, template_folder=os.path.join(SCRIPT_PATH, 'templates'))
 auth_users = {}
@@ -143,6 +143,7 @@ def test_solution():
         return jsonify({'result': result, 'balls': balls, 'questions': questions}, 200)
     else:
         return render_template('solve-test.html', username=check_auth(request.headers.get('X-Forwarded-For', "").split(',')[0].strip()))
+
 
 
 @app.route('/create_test', methods=['GET', 'POST'])
