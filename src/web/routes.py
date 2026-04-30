@@ -11,10 +11,6 @@ def hello():
     return render_template('index.html', username=check_auth(request.headers.get('X-Forwarded-For', "").split(',')[0].strip()))
 
 
-@web_bp.route("/tests")
-def ready_tests():
-    return render_template('tests.html', username=check_auth(request.headers.get('X-Forwarded-For', "").split(',')[0].strip()))
-
 
 @web_bp.route('/sign', methods=['GET', 'POST'])
 def sign():
@@ -70,6 +66,20 @@ def sign():
 
 
 
+@web_bp.route("/tests")
+def ready_tests():
+    return render_template('tests.html', username=check_auth(request.headers.get('X-Forwarded-For', "").split(',')[0].strip()))
+
+
+@web_bp.route('/create_test', methods=['GET', 'POST'])
+def create_test():
+    if request.method == 'POST':
+        test_directory = request.args.get('test')
+        test = request.get_json()['test']
+    else:
+        return render_template('create-test.html', username=check_auth(request.headers.get('X-Forwarded-For', "").split(',')[0].strip()))
+
+
 @web_bp.route('/test_solution', methods=['GET', 'POST'])
 def test_solution():
     if request.method == 'POST':
@@ -104,12 +114,3 @@ def test_solution():
         return jsonify({'result': result, 'balls': balls, 'questions': questions}, 200)
     else:
         return render_template('solve-test.html', username=check_auth(request.headers.get('X-Forwarded-For', "").split(',')[0].strip()))
-
-
-@web_bp.route('/create_test', methods=['GET', 'POST'])
-def create_test():
-    if request.method == 'POST':
-        test_directory = request.args.get('test')
-        test = request.get_json()['test']
-    else:
-        return render_template('create-test.html', username=check_auth(request.headers.get('X-Forwarded-For', "").split(',')[0].strip()))

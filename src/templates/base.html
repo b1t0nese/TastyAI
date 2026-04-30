@@ -42,13 +42,16 @@
       {% endblock %}
       
       <!-- Навигация -->
+      
       <nav class="hidden md:flex items-center gap-1 animate-fade-in">
         <a href="tests" class="nav-link">Готовые тесты</a>
         <a href="create_test" class="nav-link">Создать тест</a>
         <a href="sign">
-          <button class="ml-2 border-tasty text-tasty hover:bg-tasty hover:text-white btn btn-outline">
-            {{ username }}
-          </button>
+          {% block usertext %}
+            <button class="ml-2 border-tasty text-tasty hover:bg-tasty hover:text-white btn btn-outline">
+              {{ username }}
+            </button>
+          {% endblock %}
         </a>
       </nav>
       
