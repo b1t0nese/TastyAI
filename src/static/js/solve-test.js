@@ -52,6 +52,11 @@ document.addEventListener('DOMContentLoaded', function() {
         "description": "Артем лох",
         "type": "choice",
         "answers": ["Да", "Конечно", "Естественно", "Определенно"],
+      },
+      {
+        "name": "Вопросик текст",
+        "description": "Если 2 + 2 = 6, то 3 + 3 = ...",
+        "type": "text",
       }
     ]
   }
@@ -100,30 +105,60 @@ document.addEventListener('DOMContentLoaded', function() {
     data.questions.forEach((question, index) => {
       const showPrevButton = index !== 0;
       const nextButtonText = index === totalQuestions - 1 ? 'Завершить' : 'Следующий вопрос';
+      let questionHtml = '';
 
-      const questionHtml = `
-        <div class="question-content ${index === 0 ? 'active' : ''}" style="${index !== 0 ? 'display: none;' : ''}">
-          <div class="p-6 border-b">
-            <h2 class="text-xl font-medium mb-4">${escapeHtml(question.name)}</h2>
-            ${question.description ? `<p class="text-gray-600 mb-4">${escapeHtml(question.description)}</p>` : ''}
+      if (question.type == 'choice') {
+        questionHtml = `
+          <div class="question-content ${index === 0 ? 'active' : ''}" style="${index !== 0 ? 'display: none;' : ''}">
+            <div class="p-6 border-b">
+              <h2 class="text-xl font-medium mb-4">${escapeHtml(question.name)}</h2>
+              ${question.description ? `<p class="text-gray-600 mb-4">${escapeHtml(question.description)}</p>` : ''}
+              
+              <div class="space-y-2">
+                ${generateAnswers(question, index)} 
+              </div>
+            </div>
             
-            <div class="space-y-2">
-              ${generateAnswers(question, index)}
+            <div class="p-6 flex ${showPrevButton ? 'justify-between' : 'justify-end'}">
+              ${showPrevButton ? `
+                <button class="border border-input hover:bg-muted text-foreground btn btn-outline prev-question" data-question-index="${index}">
+                  Назад
+                </button>
+              ` : ''}
+              <button class="bg-tasty hover:bg-tasty-dark text-white btn btn-primary next-question" data-question-index="${index}">
+                ${nextButtonText}
+              </button>
             </div>
           </div>
-          
-          <div class="p-6 flex ${showPrevButton ? 'justify-between' : 'justify-end'}">
-            ${showPrevButton ? `
-              <button class="border border-input hover:bg-muted text-foreground btn btn-outline prev-question" data-question-index="${index}">
-                Назад
+        `;
+      } else if (question.type == "text") {
+        questionHtml = `
+          <div class="question-content ${index === 0 ? 'active' : ''}" style="${index !== 0 ? 'display: none;' : ''}">
+            <div class="p-6 border-b">
+              <h2 class="text-xl font-medium mb-4">${escapeHtml(question.name)}</h2>
+              ${question.description ? `<p class="text-gray-600 mb-4">${escapeHtml(question.description)}</p>` : ''}
+              
+              <div class="space-y-2">
+                  <input
+                    data-question="${index}" class="w-full rounded-md border border-input bg-background px-3 py-2 text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring text-write"
+                    placeholder="Ответ..."
+                  />
+              </div>
+            </div>
+            
+            <div class="p-6 flex ${showPrevButton ? 'justify-between' : 'justify-end'}">
+              ${showPrevButton ? `
+                <button class="border border-input hover:bg-muted text-foreground btn btn-outline prev-question" data-question-index="${index}">
+                  Назад
+                </button>
+              ` : ''}
+              <button class="bg-tasty hover:bg-tasty-dark text-white btn btn-primary next-question" data-question-index="${index}">
+                ${nextButtonText}
               </button>
-            ` : ''}
-            <button class="bg-tasty hover:bg-tasty-dark text-white btn btn-primary next-question" data-question-index="${index}">
-              ${nextButtonText}
-            </button>
+            </div>
           </div>
-        </div>
-      `;
+        `;
+      }
 
       container.insertAdjacentHTML('beforeend', questionHtml);
     });
@@ -202,7 +237,7 @@ document.addEventListener('DOMContentLoaded', function() {
     console.log(userAnswers);  // Сюдо добавить логику завершения теста
   });
   
-  // Выбор ответа
+  // Для работы вопросов с выбором ответа
   const answerOptions = document.querySelectorAll('.answer-option');
   
   answerOptions.forEach(option => {
@@ -233,10 +268,20 @@ document.addEventListener('DOMContentLoaded', function() {
       userAnswers[questionIndex] = answerIndex;
     });
   });
-  
-  // Запускаем анимацию при загрузке и при прокрутке
-  animateOnScroll();
-  window.addEventListener('scroll', animateOnScroll);
+
+  // Для работы вопросов с самописным ответом
+  const textWrites = document.querySelectorAll('.text-write');
+
+  textWrites.forEach(write => {
+    write.addEventListener('input', function(e) {
+      // Получить номер вопроса
+      const questionIndex = parseInt(this.getAttribute('data-question'));
+
+      // Сохранить ответ пользователя
+      userAnswers[questionIndex] = e.target.value;
+    });
+  });
+
   
   // Фиксация хедера при прокрутке
   let lastScrollTop = 0;
