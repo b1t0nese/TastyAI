@@ -140,7 +140,6 @@ def test_solution():
         return render_template('solve-test.html', username=check_auth(request.headers.get('X-Forwarded-For', "").split(',')[0].strip()))
 
 
-
 @app.route('/create_test', methods=['GET', 'POST'])
 def create_test():
     if request.method == 'POST':
