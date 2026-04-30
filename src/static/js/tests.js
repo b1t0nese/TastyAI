@@ -58,7 +58,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
   var tests_count = 0;
   function createTestCards() {
-    const data = fetch(`get_tests?len=${tests_count}`, {
+    const data = fetch(`api/get_tests?len=${tests_count}`, {
       method: 'GET'
     })
     .then(response => {

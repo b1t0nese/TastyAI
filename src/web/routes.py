@@ -1,63 +1,23 @@
-from flask import Flask, request, redirect, render_template, jsonify
-import os, json
-SCRIPT_PATH = os.path.dirname(__file__)
-USERS_JSON_PATH = os.path.join(SCRIPT_PATH, 'db', 'users.json')
-TESTS_JSON_PATH = os.path.join(SCRIPT_PATH, 'db', 'tests.json')
-
-with open(USERS_JSON_PATH, 'r') as f:
-    users = json.load(f)
-
-chatgpt_prompt ="Тебе дают решёный тест, ты должна написать вывод на основе ответов пользователя. Анализируй каждый вопрос обязательно, правильный ответ на него и ответ пользователя. Ответ пользователя неможет отличаться от правильного ответа специальными символами или словами. Отвечай только на том языке на котором были ответы пользователя. "
-
-app = Flask(__name__, template_folder=os.path.join(SCRIPT_PATH, 'templates'))
-auth_users = {}
+from . import web_bp
+from .functions import *
+from flask import render_template, request, redirect, jsonify
+from config import USERS_JSON_PATH, TESTS_JSON_PATH
+import json
 
 
-def log(text):
-    with open("error.txt", "a") as f:
-        f.write(str(text)+"\n")
 
-
-def check_auth(ip):
-    if ip in auth_users.keys():
-        return auth_users[ip]
-    else:
-        return "Авторизация"
-
-
-@app.route("/")
+@web_bp.route("/")
 def hello():
     return render_template('index.html', username=check_auth(request.headers.get('X-Forwarded-For', "").split(',')[0].strip()))
 
 
-@app.route("/tests")
+@web_bp.route("/tests")
 def ready_tests():
     return render_template('tests.html', username=check_auth(request.headers.get('X-Forwarded-For', "").split(',')[0].strip()))
 
 
-@app.route("/get_tests")
-def get_tests():
-    tests_count = int(request.args.get('len'))
-    with open(TESTS_JSON_PATH, 'r', encoding='utf-8') as f:
-        data = json.load(f)
-
-    test_data_list = []
-    if isinstance(data, list):
-        for test in data:
-            if isinstance(test, dict):
-                link = test.get("link", "")
-                image = test.get("image", "")
-                name = test.get("name", "")
-                description = test.get("description", "")
-                test_data_list.append([link, image, name, description])
-
-    selected_tests = test_data_list[:tests_count]
-    return jsonify(selected_tests), 200
-
-
-@app.route('/sign', methods=['GET', 'POST'])
+@web_bp.route('/sign', methods=['GET', 'POST'])
 def sign():
-    global users
     with open(USERS_JSON_PATH, 'r') as f:
         users = json.load(f)
 
@@ -109,7 +69,8 @@ def sign():
             return redirect("/")
 
 
-@app.route('/test_solution', methods=['GET', 'POST'])
+
+@web_bp.route('/test_solution', methods=['GET', 'POST'])
 def test_solution():
     if request.method == 'POST':
         user_test = request.args.get('test')
@@ -145,15 +106,10 @@ def test_solution():
         return render_template('solve-test.html', username=check_auth(request.headers.get('X-Forwarded-For', "").split(',')[0].strip()))
 
 
-
-@app.route('/create_test', methods=['GET', 'POST'])
+@web_bp.route('/create_test', methods=['GET', 'POST'])
 def create_test():
     if request.method == 'POST':
         test_directory = request.args.get('test')
         test = request.get_json()['test']
     else:
         return render_template('create-test.html', username=check_auth(request.headers.get('X-Forwarded-For', "").split(',')[0].strip()))
-
-
-if __name__ == "__main__":
-    app.run(threaded=True)
