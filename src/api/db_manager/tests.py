@@ -15,16 +15,16 @@ class Tests(SqlAlchemyBase):
     is_private = sqlalchemy.Column(sqlalchemy.Boolean, default=False)
     questions = sqlalchemy.Column(sqlalchemy.String, nullable=True)
 
-    type_id = sqlalchemy.Column(sqlalchemy.Integer, sqlalchemy.ForeignKey("tests_types.id"))
-    type = orm.relationship('TestsTypes')
+    direction_id = sqlalchemy.Column(sqlalchemy.Integer, sqlalchemy.ForeignKey("directions.id"))
+    direction = orm.relationship('Directions')
     user_id = sqlalchemy.Column(sqlalchemy.Integer, sqlalchemy.ForeignKey("users.id"))
     user = orm.relationship('User')
 
 
-class TestsTypes(SqlAlchemyBase):
-    __tablename__ = 'tests_types'
+class Directions(SqlAlchemyBase):
+    __tablename__ = 'directions'
 
     id = sqlalchemy.Column(sqlalchemy.Integer, primary_key=True, autoincrement=True)
-    type = sqlalchemy.Column(sqlalchemy.String)
+    direction = sqlalchemy.Column(sqlalchemy.String)
 
-    tests = orm.relationship("Tests", back_populates='type')
+    tests = orm.relationship("Tests", back_populates='direction')
