@@ -33,6 +33,7 @@ document.addEventListener('DOMContentLoaded', function() {
   data = {
     "name": "Тест пример (рабочий)",
     "description": "В этом тесте ты увидишь базовый пример возможностей сайта. Тест будет интересным и захватывающим, что очень классно. Продолжение описания сделано для проверки.",
+    "direction": "Бурмалда",
     "prompt": "",
     "questions": [
       {
@@ -40,27 +41,30 @@ document.addEventListener('DOMContentLoaded', function() {
         "description": "Вопрос направленный на проверку 1 типа вопросов.",
         "type": "choice",
         "answers": ["Да", "Нет", "Иногда", "Никогда"],
-        "answer": "Да"
+        "answer": "да/иногда"
       },
       {
         "name": "Вопросик2",
-        "description": "Вопрос направленный на проверку 1 типа вопросов.",
+        "description": "Ищоооо",
         "type": "choice",
-        "answers": ["Да", "Нет", "Иногда", "Никогда"],
-        "answer": "Да"
+        "answers": ["Бурмалда", "Ода", "Иногда", "Никогда"],
+        "answer": "да/иногда"
       },
       {
-        "name": "Вопросик 3",
-        "description": "Вопрос направленный на проверку 1 типа вопросов.",
+        "name": "Вопросик3",
+        "description": "Артем лох",
         "type": "choice",
-        "answers": ["Да", "Нет", "Иногда", "Никогда"],
-        "answer": "Да"
+        "answers": ["Да", "Конечно", "Естественно", "Определенно"],
+        "answer": "Да/Конечно/Естественно/Определенно"
       }
     ]
   }
 
   
-  function renderQuestions(data) {
+  function createQuestions(data) {
+    document.querySelector('.direction').innerHTML = data.direction;
+    document.querySelector('.description').innerHTML = data.description;
+    document.querySelector('.name').innerHTML = data.name;
     const container = document.querySelector('.questions_field');
     if (!container) {
       console.error('Элемент .questions_field не найден');
@@ -129,7 +133,7 @@ document.addEventListener('DOMContentLoaded', function() {
     });
   }
 
-  renderQuestions(data);
+  createQuestions(data);
 
   // --- Дальше работа с вопросами
   const questions = document.querySelectorAll('.question-content');
