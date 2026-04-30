@@ -34,28 +34,24 @@ document.addEventListener('DOMContentLoaded', function() {
     "name": "Тест пример (рабочий)",
     "description": "В этом тесте ты увидишь базовый пример возможностей сайта. Тест будет интересным и захватывающим, что очень классно. Продолжение описания сделано для проверки.",
     "direction": "Бурмалда",
-    "prompt": "",
     "questions": [
       {
         "name": "Вопросик",
         "description": "Вопрос направленный на проверку 1 типа вопросов.",
         "type": "choice",
         "answers": ["Да", "Нет", "Иногда", "Никогда"],
-        "answer": "да/иногда"
       },
       {
         "name": "Вопросик2",
         "description": "Ищоооо",
         "type": "choice",
         "answers": ["Бурмалда", "Ода", "Иногда", "Никогда"],
-        "answer": "да/иногда"
       },
       {
         "name": "Вопросик3",
         "description": "Артем лох",
         "type": "choice",
         "answers": ["Да", "Конечно", "Естественно", "Определенно"],
-        "answer": "Да/Конечно/Естественно/Определенно"
       }
     ]
   }
@@ -141,8 +137,6 @@ document.addEventListener('DOMContentLoaded', function() {
   const questionCounter = document.querySelector('.question-counter');
   const nextButtons = document.querySelectorAll('.next-question');
   const prevButtons = document.querySelectorAll('.prev-question');
-  const submitButton = document.getElementById('submit-test');
-  const resultSection = document.getElementById('test-results');
   
   // Текущий вопрос
   let currentQuestion = 0;
@@ -202,6 +196,11 @@ document.addEventListener('DOMContentLoaded', function() {
       }
     });
   });
+
+  // Кнопка "Завершить"
+  nextButtons[nextButtons.length - 1].addEventListener('click', function() {
+    console.log(userAnswers);  // Сюдо добавить логику завершения теста
+  });
   
   // Выбор ответа
   const answerOptions = document.querySelectorAll('.answer-option');
@@ -234,112 +233,6 @@ document.addEventListener('DOMContentLoaded', function() {
       userAnswers[questionIndex] = answerIndex;
     });
   });
-  
-  // Кнопка завершения теста
-  if (submitButton) {
-    submitButton.addEventListener('click', function() {
-      // Проверить, на все ли вопросы даны ответы
-      const unanswered = userAnswers.includes(null);
-      
-      if (unanswered) {
-        alert('Пожалуйста, ответьте на все вопросы перед завершением теста.');
-        return;
-      }
-      
-      // Показать результаты
-      if (resultSection) {
-        questions[currentQuestion].style.display = 'none';
-        resultSection.style.display = 'block';
-        
-        // Обновить прогресс-бар
-        if (progressBar) {
-          progressBar.style.width = '100%';
-        }
-        
-        // Обновить результаты
-        updateResults();
-      }
-    });
-  }
-  
-  // Обновление результатов
-  function updateResults() {
-    // Имитация правильных ответов
-    const correctAnswers = [0, 2, 1, 0, 3];
-    
-    // Подсчет правильных ответов
-    let score = 0;
-    
-    for (let i = 0; i < Math.min(userAnswers.length, correctAnswers.length); i++) {
-      if (userAnswers[i] === correctAnswers[i]) {
-        score++;
-      }
-    }
-    
-    // Обновление кружка с результатом
-    const scoreCircle = document.querySelector('.result-circle');
-    const scoreText = document.querySelector('.result-text');
-    
-    if (scoreCircle) {
-      scoreCircle.textContent = `${score}/${totalQuestions}`;
-    }
-    
-    if (scoreText) {
-      const percentage = Math.round((score / totalQuestions) * 100);
-      
-      if (percentage >= 80) {
-        scoreText.textContent = 'Отличный результат!';
-      } else if (percentage >= 60) {
-        scoreText.textContent = 'Хороший результат!';
-      } else if (percentage >= 40) {
-        scoreText.textContent = 'Неплохой результат!';
-      } else {
-        scoreText.textContent = 'Есть куда расти!';
-      }
-    }
-    
-    // Обновление статистики
-    document.getElementById('correct-answers').textContent = score;
-    document.getElementById('total-questions').textContent = totalQuestions;
-    document.getElementById('accuracy').textContent = `${Math.round((score / totalQuestions) * 100)}%`;
-  }
-  
-  // Кнопка "Пройти еще раз"
-  const retryButton = document.querySelector('#test-results button.btn-primary');
-  if (retryButton) {
-    retryButton.addEventListener('click', function() {
-      // Сбросить все ответы
-      userAnswers = new Array(totalQuestions).fill(null);
-      
-      // Сбросить выделение всех ответов
-      document.querySelectorAll('.answer-option').forEach(opt => {
-        opt.classList.remove('selected');
-      });
-      
-      // Вернуться к первому вопросу
-      currentQuestion = 0;
-      updateQuestion();
-      
-      // Скрыть результаты
-      resultSection.style.display = 'none';
-      questions[currentQuestion].style.display = 'block';
-    });
-  }
-  
-  // Анимация для элементов, которые должны анимироваться при прокрутке
-  const animateOnScroll = function() {
-    const elements = document.querySelectorAll('.animate-fade-in:not(.animated), .animate-scale-in:not(.animated)');
-    
-    elements.forEach(element => {
-      const elementTop = element.getBoundingClientRect().top;
-      const elementBottom = element.getBoundingClientRect().bottom;
-      
-      // Если элемент видим в области просмотра
-      if (elementTop < window.innerHeight && elementBottom > 0) {
-        element.classList.add('animated');
-      }
-    });
-  };
   
   // Запускаем анимацию при загрузке и при прокрутке
   animateOnScroll();
