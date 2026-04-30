@@ -25,7 +25,7 @@
                 Введите свои данные для входа в систему
               </p>
               
-              <form class="space-y-4" method="post" action="{{ url_for('sign') }}?type=auth">
+              <form class="space-y-4" method="post" action="{{ url_for('web.sign') }}?type=auth">
                 <div>
                   <label for="username_auth" class="block text-sm font-medium mb-1">
                     Имя
@@ -79,7 +79,7 @@
                 Зарегистрируйтесь, чтобы получить доступ ко всем функциям платформы
               </p>
               
-              <form method="post" action="{{ url_for('sign') }}?type=reg" class="space-y-4">
+              <form method="post" action="{{ url_for('web.sign') }}?type=reg" class="space-y-4">
                 <div>
                   <label for="username_reg" class="block text-sm font-medium mb-1">
                     Имя

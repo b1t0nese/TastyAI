@@ -10,4 +10,4 @@ app.register_blueprint(api.api_bp)
 
 
 if __name__ == "__main__":
-    app.run(threaded=True, debug=True)
+    app.run(threaded=True)
