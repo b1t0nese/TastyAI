@@ -18,17 +18,26 @@
           </div>
           
           <!-- Прогресс и номер вопроса -->
-          <div class="mb-6">
+          <div class="mb-6 progressdiv" style="display: none">
             <div class="flex justify-between items-center mb-2">
-              <span class="text-sm font-medium question-counter">1/5</span>
+              <span class="text-sm font-medium question-counter"></span>
             </div>
             <div class="progress-container">
-              <div class="progress-bar" style="width: 20%"></div>
+              <div class="progress-bar" style="width: 0%"></div>
             </div>
           </div>
           
           <!-- Контент теста -->
-          <div class="bg-card rounded-lg shadow-md overflow-hidden questions_field"></div>
+          <div class="bg-card rounded-lg shadow-md overflow-hidden questions_field">
+            <div class="p-6">
+              <div class="hero-image animate-scale-in">
+                <img src="static/images/hero-image.svg" alt="TestIcon" class="w-full max-w-md mx-auto">
+              </div>
+              <button class="bg-tasty hover:bg-tasty-dark text-white btn btn-primary w-full mt-6">
+                Начать тест
+              </button>
+            </div>
+          </div>
         </div>
       </div>
     </section>

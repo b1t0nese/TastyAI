@@ -61,11 +61,17 @@ document.addEventListener('DOMContentLoaded', function() {
     ]
   }
 
+  document.querySelector('.direction').innerHTML = data.direction;
+  document.querySelector('.description').innerHTML = data.description;
+  document.querySelector('.name').innerHTML = data.name;
+
   
   function createQuestions(data) {
     document.querySelector('.direction').innerHTML = data.direction;
     document.querySelector('.description').innerHTML = data.description;
     document.querySelector('.name').innerHTML = data.name;
+    document.querySelector('.progressdiv').style.display = 'block';
+
     const container = document.querySelector('.questions_field');
     if (!container) {
       console.error('Элемент .questions_field не найден');
@@ -164,7 +170,7 @@ document.addEventListener('DOMContentLoaded', function() {
     });
   }
 
-  createQuestions(data);
+  //createQuestions(data);
 
   // --- Дальше работа с вопросами
   const questions = document.querySelectorAll('.question-content');

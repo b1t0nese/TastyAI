@@ -16,11 +16,13 @@ document.addEventListener('DOMContentLoaded', function() {
   }
 
   function createTestCard(test) {
-    const [testUrl, imageUrl, title, description] = test;
+    const imageUrl = test.image;
+    const title = test.title;
+    const description = test.description;
+    const direction = test.direction.direction;
     
     // Создаем основной div карточки
     const card = document.createElement('a');
-    card.href = testUrl;
     card.className = "card card-hover animate-scale-in test-card";
 
     const imageContainer = document.createElement('div');
@@ -58,7 +60,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
   var tests_count = 0;
   function createTestCards() {
-    const data = fetch(`api/get_tests?len=${tests_count}`, {
+    const data = fetch(`api/get_tests?len=${tests_count}+search=${searchField.value}`, {
       method: 'GET'
     })
     .then(response => {
@@ -70,9 +72,7 @@ document.addEventListener('DOMContentLoaded', function() {
         container.removeChild(container.firstChild);
       }
       for (let i = 0; i < tests.length; i++) {
-        if (!searchField.value || tests[i][1].includes(searchField.value) || tests[i][2].includes(searchField.value)) {
-          createTestCard(tests[i]);
-        }
+        createTestCard(tests[i]);
       }
     });
   }
@@ -140,30 +140,4 @@ document.addEventListener('DOMContentLoaded', function() {
     
     lastScrollTop = scrollTop <= 0 ? 0 : scrollTop;
   });
-  
-  // Обработка поисковой формы
-  const searchForm = document.querySelector('form');
-  if (searchForm) {
-    searchForm.addEventListener('submit', function(e) {
-      e.preventDefault();
-      const searchTerm = this.querySelector('input').value.toLowerCase();
-      
-      // Фильтрация тестов на основе поискового запроса
-      testCards.forEach(card => {
-        const title = card.querySelector('h3').textContent.toLowerCase();
-        const description = card.querySelector('p').textContent.toLowerCase();
-        const category = card.getAttribute('data-category').toLowerCase();
-        
-        if (title.includes(searchTerm) || description.includes(searchTerm) || category.includes(searchTerm)) {
-          card.style.display = 'block';
-        } else {
-          card.style.display = 'none';
-        }
-      });
-      
-      // Сбросить активную категорию
-      categories.forEach(cat => cat.classList.remove('active'));
-      document.querySelector('.category[data-category="all"]').classList.add('active');
-    });
-  }
 });
