@@ -67,9 +67,6 @@ document.addEventListener('DOMContentLoaded', function() {
 
   
   function createQuestions(data) {
-    document.querySelector('.direction').innerHTML = data.direction;
-    document.querySelector('.description').innerHTML = data.description;
-    document.querySelector('.name').innerHTML = data.name;
     document.querySelector('.progressdiv').style.display = 'block';
 
     const container = document.querySelector('.questions_field');
@@ -170,124 +167,126 @@ document.addEventListener('DOMContentLoaded', function() {
     });
   }
 
-  //createQuestions(data);
+  document.querySelector('.start-test').addEventListener('click', function() {
+    document.querySelector('.questions_field').innerHTML = '';  // Очищаем поле
+    createQuestions(data);  // Создаем сами вопросы
+    document.querySelector('.description').innerHTML = '';  // Убираем описание
 
-  // --- Дальше работа с вопросами
-  const questions = document.querySelectorAll('.question-content');
-  const progressBar = document.querySelector('.progress-bar');
-  const questionCounter = document.querySelector('.question-counter');
-  const nextButtons = document.querySelectorAll('.next-question');
-  const prevButtons = document.querySelectorAll('.prev-question');
-  
-  // Текущий вопрос
-  let currentQuestion = 0;
-  let totalQuestions = questions.length;
-  
-  // Счетчик ответов
-  let userAnswers = new Array(totalQuestions).fill(null);
-  
-  // Функция для обновления отображения вопросов
-  function updateQuestion() {
-    questions.forEach((question, index) => {
-      if (index === currentQuestion) {
-        question.classList.add('active');
-        question.style.display = 'block';
-      } else {
-        question.classList.remove('active');
-        question.style.display = 'none';
-      }
-    });
+    const questions = document.querySelectorAll('.question-content');
+    const progressBar = document.querySelector('.progress-bar');
+    const questionCounter = document.querySelector('.question-counter');
+    const nextButtons = document.querySelectorAll('.next-question');
+    const prevButtons = document.querySelectorAll('.prev-question');
     
-    // Обновление счетчика вопросов
-    if (questionCounter) {
-      questionCounter.textContent = `${currentQuestion + 1}/${totalQuestions}`;
-    }
+    // Текущий вопрос
+    let currentQuestion = 0;
+    let totalQuestions = questions.length;
     
-    // Обновление прогресс-бара
-    if (progressBar) {
-      progressBar.style.width = `${((currentQuestion + 1) / totalQuestions) * 100}%`;
-    }
+    // Счетчик ответов
+    let userAnswers = new Array(totalQuestions).fill(null);
     
-    // Показать/скрыть кнопку "Назад"
-    prevButtons.forEach(button => {
-      button.style.visibility = currentQuestion === 0 ? 'hidden' : 'visible';
-    });
-  }
-  
-  // Инициализация
-  if (questions.length > 0) {
-    updateQuestion();
-  }
-  
-  // Кнопки навигации
-  nextButtons.forEach(button => {
-    button.addEventListener('click', function() {
-      if (currentQuestion < totalQuestions - 1) {
-        currentQuestion++;
-        updateQuestion();
-      }
-    });
-  });
-  
-  prevButtons.forEach(button => {
-    button.addEventListener('click', function() {
-      if (currentQuestion > 0) {
-        currentQuestion--;
-        updateQuestion();
-      }
-    });
-  });
-
-  // Кнопка "Завершить"
-  nextButtons[nextButtons.length - 1].addEventListener('click', function() {
-    console.log(userAnswers);  // Сюдо добавить логику завершения теста
-  });
-  
-  // Для работы вопросов с выбором ответа
-  const answerOptions = document.querySelectorAll('.answer-option');
-  
-  answerOptions.forEach(option => {
-    option.addEventListener('click', function() {
-      // Получить номер вопроса
-      const questionIndex = parseInt(this.getAttribute('data-question'));
-      
-      // Получить номер ответа
-      const answerIndex = parseInt(this.getAttribute('data-answer'));
-      
-      // Снять выделение со всех ответов на этот вопрос
-      document.querySelectorAll(`.answer-option[data-question="${questionIndex}"]`).forEach(opt => {
-        opt.classList.remove('selected');
-        const radio = opt.querySelector('input[type="radio"]');
-        if (radio) {
-          radio.checked = false;
+    // Функция для обновления отображения вопросов
+    function updateQuestion() {
+      questions.forEach((question, index) => {
+        if (index === currentQuestion) {
+          question.classList.add('active');
+          question.style.display = 'block';
+        } else {
+          question.classList.remove('active');
+          question.style.display = 'none';
         }
       });
       
-      // Выделить текущий ответ
-      this.classList.add('selected');
-      const radio = this.querySelector('input[type="radio"]');
-      if (radio) {
-        radio.checked = true;
+      // Обновление счетчика вопросов
+      if (questionCounter) {
+        questionCounter.textContent = `${currentQuestion + 1}/${totalQuestions}`;
       }
       
-      // Сохранить ответ пользователя
-      userAnswers[questionIndex] = answerIndex;
+      // Обновление прогресс-бара
+      if (progressBar) {
+        progressBar.style.width = `${((currentQuestion + 1) / totalQuestions) * 100}%`;
+      }
+      
+      // Показать/скрыть кнопку "Назад"
+      prevButtons.forEach(button => {
+        button.style.visibility = currentQuestion === 0 ? 'hidden' : 'visible';
+      });
+    }
+    
+    // Инициализация
+    if (questions.length > 0) {
+      updateQuestion();
+    }
+    
+    // Кнопки навигации
+    nextButtons.forEach(button => {
+      button.addEventListener('click', function() {
+        if (currentQuestion < totalQuestions - 1) {
+          currentQuestion++;
+          updateQuestion();
+        }
+      });
+    });
+    
+    prevButtons.forEach(button => {
+      button.addEventListener('click', function() {
+        if (currentQuestion > 0) {
+          currentQuestion--;
+          updateQuestion();
+        }
+      });
+    });
+
+    // Кнопка "Завершить"
+    nextButtons[nextButtons.length - 1].addEventListener('click', function() {
+      console.log(userAnswers);  // Сюдо добавить логику завершения теста
+    });
+    
+    // Для работы вопросов с выбором ответа
+    const answerOptions = document.querySelectorAll('.answer-option');
+    
+    answerOptions.forEach(option => {
+      option.addEventListener('click', function() {
+        // Получить номер вопроса
+        const questionIndex = parseInt(this.getAttribute('data-question'));
+        
+        // Получить номер ответа
+        const answerIndex = parseInt(this.getAttribute('data-answer'));
+        
+        // Снять выделение со всех ответов на этот вопрос
+        document.querySelectorAll(`.answer-option[data-question="${questionIndex}"]`).forEach(opt => {
+          opt.classList.remove('selected');
+          const radio = opt.querySelector('input[type="radio"]');
+          if (radio) {
+            radio.checked = false;
+          }
+        });
+        
+        // Выделить текущий ответ
+        this.classList.add('selected');
+        const radio = this.querySelector('input[type="radio"]');
+        if (radio) {
+          radio.checked = true;
+        }
+        
+        // Сохранить ответ пользователя
+        userAnswers[questionIndex] = answerIndex;
+      });
+    });
+
+    // Для работы вопросов с самописным ответом
+    const textWrites = document.querySelectorAll('.text-write');
+
+    textWrites.forEach(write => {
+      write.addEventListener('input', function(e) {
+        // Получить номер вопроса
+        const questionIndex = parseInt(this.getAttribute('data-question'));
+
+        // Сохранить ответ пользователя
+        userAnswers[questionIndex] = e.target.value;
+      });
     });
   });
-
-  // Для работы вопросов с самописным ответом
-  const textWrites = document.querySelectorAll('.text-write');
-
-  textWrites.forEach(write => {
-    write.addEventListener('input', function(e) {
-      // Получить номер вопроса
-      const questionIndex = parseInt(this.getAttribute('data-question'));
-
-      // Сохранить ответ пользователя
-      userAnswers[questionIndex] = e.target.value;
-    });
-  });
-
   
   // Фиксация хедера при прокрутке
   let lastScrollTop = 0;
