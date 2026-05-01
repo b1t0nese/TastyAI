@@ -13,7 +13,7 @@
   <header class="header">
     <div class="container flex h-16 items-center justify-between">
       <a href="/" class="flex items-center gap-2 animate-fade-in">
-        <span class="text-2xl font-bold">
+        <span class="text-2xl font-bold icon-tasty">
           <span class="text-tasty">Tasty</span><span>AI</span>
         </span>
       </a>
@@ -28,6 +28,7 @@
           onkeydown="handleEnter(event)"
           class="w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 pr-10"
         >
+        <button class="btn btn-outline text-center border-input" onclick="clickBtn()" style="padding: 0.37rem; margin-left: 0.7rem;">🔍</button>
       </div>
       <script>
         function handleEnter(event) {
@@ -36,6 +37,13 @@
             if (searchQuery) {
               window.location.href = `tests?search_query=${encodeURIComponent(searchQuery)}`;
             }
+          }
+        }
+
+        function clickBtn() {
+          const searchQuery = document.getElementById("searchField").value;
+          if (searchQuery) {
+            window.location.href = `tests?search_query=${encodeURIComponent(searchQuery)}`;
           }
         }
       </script>

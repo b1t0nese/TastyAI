@@ -64,6 +64,11 @@ a {
 .text-tasty {
   color: var(--tasty);
 }
+.icon-tasty{
+  transition: transform 0.3s ease;
+} .icon-tasty:hover {
+  transform: scale(1.1);
+}
 
 /* Кнопки */
 .btn {
@@ -236,6 +241,7 @@ a {
   outline: 2px solid transparent;
   outline-offset: 2px;
   box-shadow: 0 0 0 2px hsl(var(--background)), 0 0 0 4px hsl(var(--ring));
+  transition: box-shadow 0.4s ease;
 }
 
 .absolute {
