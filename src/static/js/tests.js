@@ -17,21 +17,29 @@ document.addEventListener('DOMContentLoaded', function() {
 
   function createTestCard(test) {
     const imageUrl = test.image;
-    const title = test.title;
+    const title = test.name;
     const description = test.description;
     const direction = test.direction.direction;
     
     // Создаем основной div карточки
     const card = document.createElement('a');
+    card.href = 'test_solution'
     card.className = "card card-hover animate-scale-in test-card";
 
     const imageContainer = document.createElement('div');
-    imageContainer.className = "h-48 relative";
+    imageContainer.className = "h-48";
     const img = document.createElement('img');
     img.src = imageUrl;
     img.alt = title;
-    img.className = "w-full h-48 object-cover";
+    img.className = "w-full h-48";
+    img.style = "border-bottom: 1px solid rgba(191, 191, 191, 0.5)";
     imageContainer.appendChild(img);
+
+    const directionSpan = document.createElement('span');
+    directionSpan.className = "text-sm bg-tasty text-white px-2 py-1 rounded-md direction";
+    directionSpan.style = "padding: 0.5vh; position: absolute; right: 1vh; top: 1vh;";
+    directionSpan.innerHTML = direction;
+    imageContainer.appendChild(directionSpan);
 
     // Div для текста карточки
     const textContainer = document.createElement('div');
