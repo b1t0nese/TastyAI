@@ -3,9 +3,9 @@ from db_manager.__all_models import *
 import json, os
 
 DB_PATH = os.path.join(os.path.dirname(__file__), "db")
-db_session.global_init(os.path.join(DB_PATH, "db.sqlite"))
+db_session.global_init(os.path.join(DB_PATH, "db.sqlite3"))
 
-with open(os.path.join(DB_PATH, "tests.json"), 'r', encoding='utf-8') as f:
+with open(os.path.join(DB_PATH, "test_data(tests).json"), 'r', encoding='utf-8') as f:
     data = json.load(f)
 
 db_sess = db_session.create_session()
