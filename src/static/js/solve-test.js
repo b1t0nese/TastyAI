@@ -36,6 +36,7 @@ document.addEventListener('DOMContentLoaded', function() {
   .then(response => {
     return response.json();
   }).then(data => {
+    document.querySelector('.test-preview-img').src = data.image;
     document.querySelector('.direction').innerHTML = data.direction.direction;
     document.querySelector('.description').innerHTML = data.description;
     document.querySelector('.name').innerHTML = data.name;

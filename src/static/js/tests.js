@@ -69,7 +69,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
   var tests_count = 0;
   function createTestCards() {
-    const data = fetch(`api/get_tests?len=${tests_count}+search=${searchField.value}`, {
+    const data = fetch(`api/get_tests?len=${tests_count}&search=${searchField.value}`, {
       method: 'GET'
     })
     .then(response => {
@@ -93,8 +93,10 @@ document.addEventListener('DOMContentLoaded', function() {
   createTestCards();
 
   searchField.addEventListener('keydown', function(event) {
-    tests_count = 9;
-    createTestCards();
+    if (event.key === 'Enter') {
+      tests_count = 9;
+      createTestCards();
+    }
   });
   
   // Пагинация
