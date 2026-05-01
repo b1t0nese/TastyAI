@@ -27,15 +27,16 @@ def get_tests_trudb():
 #### Вывод:
 Данные о тестах в формате json: [[id, image, name, description], [id, image, name, description]]
 #### Параметры:
-1. tests_count -количество получаемых тестов
-2. search_query -текст для поиска тестов"""
+1. len -количество получаемых тестов
+2. search -текст для поиска тестов"""
     tests_count = request.args.get('len', type=int)
-    search_query = request.args.get('search_query').lower()
+    search_query = request.args.get('search').lower()
 
     db_sess = db_session.create_session()
-    tests_data = db_sess.query(tests.Test).filter(tests.Test.is_private != True and (
-        search_query in tests.Test.name or search_query in tests.Test.description))
-    tests_data = list(map(lambda x: x.to_dict(["questions"]), tests_data)[:tests_count])
+    tests_data = db_sess.query(tests.Test).filter(tests.Test.is_private != True and (search_query is None or (
+        search_query in tests.Test.name or search_query in tests.Test.description)))
+    tests_data = list(map(lambda x: x.to_dict(["questions"]), tests_data))
+    tests_data = tests_count[:tests_count] if tests_count else tests_count
     return jsonify(tests_data), 200
 
 
@@ -48,6 +49,7 @@ def get_test():
 2. with_answers -включение ответов в данные теста"""
     test_id = request.args.get('test', type=int)
     with_answers = True if request.args.get('with_answers') else False
+
     db_sess = db_session.create_session()
     test = db_sess.query(tests.Test).filter(tests.Test.id == test_id).first()
     if test:

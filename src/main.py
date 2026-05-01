@@ -1,10 +1,9 @@
 from flask import Flask
 import web
 import api
-import config
 
 
-app = Flask(__name__, template_folder=config.TEMPLATES_FOLDER)
+app = Flask(__name__)
 app.register_blueprint(web.web_bp)
 app.register_blueprint(api.api_bp)
 
