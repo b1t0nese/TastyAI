@@ -20,10 +20,11 @@ document.addEventListener('DOMContentLoaded', function() {
     const title = test.name;
     const description = test.description;
     const direction = test.direction.direction;
-    
+    const id = test.id;
+
     // Создаем основной div карточки
     const card = document.createElement('a');
-    card.href = 'test_solution'
+    card.href = `test_solution?test=${id}`;
     card.className = "card card-hover animate-scale-in test-card";
 
     const imageContainer = document.createElement('div');
