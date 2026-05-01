@@ -1,8 +1,6 @@
 from . import web_bp
 from .functions import *
 from flask import render_template, request, redirect, jsonify
-from config import USERS_JSON_PATH
-import json
 
 
 
@@ -14,7 +12,7 @@ def hello():
 
 @web_bp.route('/sign', methods=['GET', 'POST'])
 def sign():
-    users = get_users()
+    users = [] # получение всех пользователей, а вообще это всё надо запихнуть в апи
 
     if request.method == 'POST':
         request_type = request.args.get('type')
@@ -47,10 +45,11 @@ def sign():
             elif username in users.keys():
                 return render_template('auth.html', error='\nТакой пользователь уже существует.')
             else:
-                with open(USERS_JSON_PATH, 'w') as f:
-                    users[username] = password
-                    f.seek(0)
-                    json.dump(users, f)
+                # with open(USERS_JSON_PATH, 'w') as f:
+                #     users[username] = password
+                #     f.seek(0)
+                #     json.dump(users, f)
+                # Сохранение пользователя
                 auth_users[request.headers.get('X-Forwarded-For', "").split(',')[0].strip()] = username
                 return render_template('index.html', username=check_auth(request.headers.get('X-Forwarded-For', "").split(',')[0].strip()))
 
@@ -82,27 +81,28 @@ def create_test():
 @web_bp.route('/test_solution', methods=['GET', 'POST'])
 def test_solution():
     if request.method == 'POST':
-        user_test_id = request.args.get('test')
-        user_answers = request.get_json()['answers']
-        if len(user_answers.split(':'))>1:
-            user_answers = user_answers.split(':')[0]
-        user_answers = user_answers.lower().split("|")
-        test = get_test(user_test_id)
-        questions = {}
-        balls = 0
-        for i, question in enumerate(test["questions"]):
-            user_answer = user_answers[i]
-            if question[1] == user_answer:
-                balls += 1
-            questions[f"id:{i}"] = {"question": question[0], "user_answer": user_answer, "true_answer": question[1]}
-        # result = client.predict(
-        #         message=questions,
-        #         system_message=chatgpt_prompt+test["prompt"],
-        #         max_tokens=1024,
-        #         temperature=0.7,
-        #         top_p=0.95,
-        #         api_name="/chat")
-        result = "net"
-        return jsonify({'result': result, 'balls': balls, 'questions': questions}, 200)
+        pass # это тоже надо будет переделать и в api запихнуть
+        # user_test_id = request.args.get('test')
+        # user_answers = request.get_json()['answers']
+        # if len(user_answers.split(':'))>1:
+        #     user_answers = user_answers.split(':')[0]
+        # user_answers = user_answers.lower().split("|")
+        # test = get_test(user_test_id)
+        # questions = {}
+        # balls = 0
+        # for i, question in enumerate(test["questions"]):
+        #     user_answer = user_answers[i]
+        #     if question[1] == user_answer:
+        #         balls += 1
+        #     questions[f"id:{i}"] = {"question": question[0], "user_answer": user_answer, "true_answer": question[1]}
+        # # result = client.predict(
+        # #         message=questions,
+        # #         system_message=chatgpt_prompt+test["prompt"],
+        # #         max_tokens=1024,
+        # #         temperature=0.7,
+        # #         top_p=0.95,
+        # #         api_name="/chat")
+        # result = "net"
+        # return jsonify({'result': result, 'balls': balls, 'questions': questions}, 200)
     else:
         return render_template('solve-test.html', username=check_auth(request.headers.get('X-Forwarded-For', "").split(',')[0].strip()))

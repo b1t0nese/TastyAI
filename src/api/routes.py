@@ -2,25 +2,14 @@ from . import api_bp
 from flask import jsonify, request
 from .db_manager import db_session
 from .db_manager.__all_models import *
-from config import TESTS_JSON_PATH
+from config import DB_PATH
 import json
+
+db_session.global_init(DB_PATH)
 
 
 
 @api_bp.route("/get_tests")
-def get_tests():
-    tests_count = request.args.get('len', type=int)
-    with open(TESTS_JSON_PATH, 'r', encoding='utf-8') as f:
-        data = json.load(f)
-    test_data_list = []
-    for test in data:
-        test_data_list.append([test.get("id", ""), test.get("image", ""),
-                               test.get("name", ""), test.get("description", "")])
-    return jsonify(test_data_list[:tests_count]), 200
-
-
-
-@api_bp.route("/get_tests_trudb")
 def get_tests_trudb():
     """## api/get_tests
 ### Обработка на получение тестов для главной страницы тестов.
@@ -30,13 +19,13 @@ def get_tests_trudb():
 1. len -количество получаемых тестов
 2. search -текст для поиска тестов"""
     tests_count = request.args.get('len', type=int)
-    search_query = request.args.get('search').lower()
+    search_query = request.args.get('search')
 
     db_sess = db_session.create_session()
-    tests_data = db_sess.query(tests.Test).filter(tests.Test.is_private != True and (search_query is None or (
-        search_query in tests.Test.name or search_query in tests.Test.description)))
-    tests_data = list(map(lambda x: x.to_dict(["questions"]), tests_data))
-    tests_data = tests_count[:tests_count] if tests_count else tests_count
+    tests_data = db_sess.query(Test).filter(Test.is_private != True and (search_query is None or (
+        search_query.lower() in Test.name.lower() or search_query.lower() in Test.description.lower())))
+    tests_data = list(map(lambda x: x.to_dict(["questions", "is_private", "direction_id", "user_id"]), tests_data))
+    tests_data = tests_data[:tests_count] if tests_count else tests_data
     return jsonify(tests_data), 200
 
 
@@ -51,7 +40,7 @@ def get_test():
     with_answers = True if request.args.get('with_answers') else False
 
     db_sess = db_session.create_session()
-    test = db_sess.query(tests.Test).filter(tests.Test.id == test_id).first()
+    test = db_sess.query(Test).filter(Test.id == test_id).first()
     if test:
         test = test.to_dict()
         test["questions"] = json.loads(test["questions"])
