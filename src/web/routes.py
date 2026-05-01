@@ -1,7 +1,7 @@
 from . import web_bp
 from .functions import *
 from flask import render_template, request, redirect, jsonify
-from config import USERS_JSON_PATH, TESTS_JSON_PATH
+from config import USERS_JSON_PATH
 import json
 
 
@@ -14,8 +14,7 @@ def hello():
 
 @web_bp.route('/sign', methods=['GET', 'POST'])
 def sign():
-    with open(USERS_JSON_PATH, 'r') as f:
-        users = json.load(f)
+    users = get_users()
 
     if request.method == 'POST':
         request_type = request.args.get('type')
@@ -83,19 +82,12 @@ def create_test():
 @web_bp.route('/test_solution', methods=['GET', 'POST'])
 def test_solution():
     if request.method == 'POST':
-        user_test = request.args.get('test')
+        user_test_id = request.args.get('test')
         user_answers = request.get_json()['answers']
         if len(user_answers.split(':'))>1:
             user_answers = user_answers.split(':')[0]
         user_answers = user_answers.lower().split("|")
-        with open(TESTS_JSON_PATH, 'r') as f:
-            tests = json.load(f)
-        for t in tests.keys():
-            if t == user_test:
-                test = tests[t]
-                break
-            else:
-                test = None
+        test = get_test(user_test_id)
         questions = {}
         balls = 0
         for i, question in enumerate(test["questions"]):

@@ -1,6 +1,6 @@
 [
   {
-    "link": "",
+    "id": "",
     "image": "static/images/welcome.jpg",
     "name": "Тест пример",
     "description": "В этом тесте ты увидишь базовый пример возможностей сайта.",
@@ -24,7 +24,7 @@
     ]
   },
   {
-    "link": "",
+    "id": "",
     "image": "static/images/site_icon.png",
     "name": "Тест пример",
     "description": "В этом тесте ты увидишь базовый пример возможностей сайта. Тест будет интересным и захватывающим, что очень классно. Продолжение описания сделано для проверки.",
@@ -48,7 +48,7 @@
     ]
   },
   {
-    "link": "test_solution?test=static/tests/test_primer/test.json",
+    "id": "test_solution?test=static/tests/test_primer/test.json",
     "image": "static/images/abstract1.png",
     "name": "Тест пример (рабочий)",
     "description": "В этом тесте ты увидишь базовый пример возможностей сайта. Тест будет интересным и захватывающим, что очень классно. Продолжение описания сделано для проверки.",
