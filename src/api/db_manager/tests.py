@@ -11,11 +11,12 @@ class Test(SqlAlchemyBase, JsonSerializableMixin):
 
     id = sqlalchemy.Column(sqlalchemy.Integer, primary_key=True, autoincrement=True)
     image = sqlalchemy.Column(sqlalchemy.String, nullable=True)
-    name = sqlalchemy.Column(sqlalchemy.String)
-    description = sqlalchemy.Column(sqlalchemy.String, nullable=True)
+    name = sqlalchemy.Column(sqlalchemy.String(collation='NOCASE'))
+    description = sqlalchemy.Column(sqlalchemy.String(collation='NOCASE'), nullable=True)
     created_date = sqlalchemy.Column(sqlalchemy.DateTime, default=datetime.datetime.now)
     is_private = sqlalchemy.Column(sqlalchemy.Boolean, default=False)
     questions = sqlalchemy.Column(sqlalchemy.String, nullable=True)
+    verdict_type = sqlalchemy.Column(sqlalchemy.String, default="key")
 
     direction_id = sqlalchemy.Column(sqlalchemy.Integer, sqlalchemy.ForeignKey("directions.id"))
     direction = orm.relationship('Direction')
