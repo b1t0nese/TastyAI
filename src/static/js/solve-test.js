@@ -259,68 +259,54 @@ document.addEventListener('DOMContentLoaded', function() {
             currentQuestion++;
             updateQuestion();
 
-            // Типо наш json результат
-            const answers_data = {
-                "answers": [
-                    {
-                        "answer": "2x",
-                        "description": "Правильно.",
-                        "is_correct": true
-                    },
-                    {
-                        "answer": "2",
-                        "description": "Правильно.",
-                        "is_correct": true
-                    },
-                    {
-                        "answer": "0",
-                        "description": "Правильно.",
-                        "is_correct": true
-                    },
-                    {
-                        "answer": "Нет",
-                        "description": "Неправильно. Правильный ответ: Угол наклона касательной",
-                        "is_correct": false
-                    }
-                ],
-                "finished_at": "2026-05-02T21:36:42.379406",
-                "id": "4a230bcc-6ff0-4664-9427-e4099b44f4d3",
-                "started_at": "2026-05-02T21:30:05.489283",
-                "test_id": 1,
-                "user": null,
-                "verdict": "Результат: 3/4\nВопрос №1: правильно\nВопрос №2: правильно\nВопрос №3: правильно\nВопрос №4: неправильно"
-            }
+            const attemptData = {
+              attempt_id: data.attempt,
+              answers: userAnswers,
+              finished_at: new Date().toISOString()
+            };
+            console.log(attemptData);
 
-            // Устанавливаем результыта в одноименной вкладке
-            document.querySelector('.result-title').innerHTML = answers_data.verdict.split('\n')[0]
-            document.querySelector('.result-description').innerHTML = answers_data.verdict.split('\n').splice(1).map(item => {
-              const [question, answer] = item.split(': ');
-              const color = answer === 'правильно' ? 'green' : 'red';
-              return `${question}: <text style='color: ${color}'>${answer}</text>`;
-            }).join('<br>') + '<br>';
-            
-            // Меняем элементы под ответ
-            document.querySelectorAll('.test-explanatory-text').forEach((text, index) => {
-              text.innerHTML = answers_data.answers[index].description;
-            });
+            // Отправляем POST-запрос на /api/solve_test
+            fetch(`/api/solve_test?attempt=${data.attempt}`, {
+              method: 'POST',
+              headers: {
+                'Content-Type': 'application/json',
+              },
+              body: JSON.stringify(attemptData)
+            })
+            .then(response => response.json())
+            .then(answers_data => {
+              // Устанавливаем результыта в одноименной вкладке
+              document.querySelector('.result-title').innerHTML = answers_data.verdict.split('\n')[0]
+              document.querySelector('.result-description').innerHTML = answers_data.verdict.split('\n').splice(1).map(item => {
+                const [question, answer] = item.split(': ');
+                const color = answer === 'правильно' ? 'green' : 'red';
+                return `${question}: <text style='color: ${color}'>${answer}</text>`;
+              }).join('<br>') + '<br>';
+              
+              // Меняем элементы под ответ
+              document.querySelectorAll('.test-explanatory-text').forEach((text, index) => {
+                text.innerHTML = answers_data.answers[index].description;
+              });
 
-            document.querySelectorAll('.test-explanatory-div').forEach((div, index) => {
-              if (answers_data.answers[index].is_correct == true) {
-                div.classList.add('answer-correct');
-              } else {
-                div.classList.add('answer-incorrect');
-              }
-            });
+              document.querySelectorAll('.test-explanatory-div').forEach((div, index) => {
+                if (answers_data.answers[index].is_correct == true) {
+                  div.classList.add('answer-correct');
+                } else {
+                  div.classList.add('answer-incorrect');
+                }
+              });
 
-            // Устанавливаем все конпкам текст дальше
-            nextButtons.forEach(button => {
-              if (button == nextButtons[nextButtons.length - 1]) {
-                button.innerHTML = "На главную";
-              } else if (button == nextButtons[nextButtons.length - 2]) {
-                button.innerHTML = "К результатам";
-              } else {
-                button.innerHTML = "Дальше";
-              }
+              // Устанавливаем все конпкам текст дальше
+              nextButtons.forEach(button => {
+                if (button == nextButtons[nextButtons.length - 1]) {
+                  button.innerHTML = "На главную";
+                } else if (button == nextButtons[nextButtons.length - 2]) {
+                  button.innerHTML = "К результатам";
+                } else {
+                  button.innerHTML = "Дальше";
+                }
+              });
             });
           }
           document.querySelector('.progressdiv').style.display = 'none';  // Скрываем полоску с результатами

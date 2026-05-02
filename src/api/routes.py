@@ -75,7 +75,7 @@ def solve_test():
 #### Данные: json список из ответов."""
     attempt_id = request.args.get('attempt')
     only_data = False if request.args.get('only_data') is None else True
-    answers = request.get_json()
+    answers = request.get_json()['answers']
 
     try:
         db_sess = db_session.create_session()
