@@ -17,10 +17,11 @@ class Test(SqlAlchemyBase, JsonSerializableMixin):
     is_private = sqlalchemy.Column(sqlalchemy.Boolean, default=False)
     questions = sqlalchemy.Column(sqlalchemy.String, nullable=True)
     verdict_type = sqlalchemy.Column(sqlalchemy.String, default="key")
+    prompt = sqlalchemy.Column(sqlalchemy.String, nullable=True)
 
-    direction_id = sqlalchemy.Column(sqlalchemy.Integer, sqlalchemy.ForeignKey("directions.id"))
+    direction_id = sqlalchemy.Column(sqlalchemy.Integer, sqlalchemy.ForeignKey("directions.id"), nullable=True)
     direction = orm.relationship('Direction')
-    user_id = sqlalchemy.Column(sqlalchemy.Integer, sqlalchemy.ForeignKey("users.id"))
+    user_id = sqlalchemy.Column(sqlalchemy.Integer, sqlalchemy.ForeignKey("users.id"), nullable=True)
     user = orm.relationship('User')
 
 

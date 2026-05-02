@@ -5,6 +5,7 @@
     "name": "Основы математического анализа",
     "description": "Проверьте свои знания в области производных, интегралов и пределов. Тест подходит для студентов 1-2 курса.",
     "direction": "Математика",
+    "verdict_type": "key",
     "prompt": "",
     "questions": [
       {
@@ -12,14 +13,14 @@
         "description": "Чему равна производная функции f(x) = x²?",
         "type": "choice",
         "answers": ["x", "2x", "x²", "2"],
-        "answer": ["2x"]
+        "answer": "2x"
       },
       {
         "name": "Определённый интеграл",
         "description": "Вычислите определённый интеграл ∫₀² x dx",
         "type": "choice",
         "answers": ["1", "2", "4", "0"],
-        "answer": ["2"]
+        "answer": "2"
       },
       {
         "name": "Предел последовательности",
@@ -37,7 +38,7 @@
           "Площадь под графиком",
           "Объём тела вращения"
         ],
-        "answer": ["Угол наклона касательной"]
+        "answer": "Угол наклона касательной"
       }
     ]
   },
@@ -47,6 +48,7 @@
     "name": "Великая Отечественная война",
     "description": "Ключевые события, даты и личности Великой Отечественной войны 1941-1945 годов.",
     "direction": "История",
+    "verdict_type": "key",
     "prompt": "",
     "questions": [
       {
@@ -54,14 +56,14 @@
         "description": "Когда началась Великая Отечественная война?",
         "type": "choice",
         "answers": ["1 сентября 1939", "22 июня 1941", "7 декабря 1941", "9 мая 1945"],
-        "answer": ["22 июня 1941"]
+        "answer": "22 июня 1941"
       },
       {
         "name": "Блокада Ленинграда",
         "description": "Сколько дней длилась блокада Ленинграда?",
         "type": "choice",
         "answers": ["500", "700", "872", "1000"],
-        "answer": ["872"]
+        "answer": "872"
       },
       {
         "name": "Сталинградская битва",
@@ -72,7 +74,7 @@
       {
         "name": "Полководцы Победы",
         "description": "Выберите полководцев Великой Отечественной войны",
-        "type": "choice",
+        "type": "many_choice",
         "answers": ["Жуков Г.К.", "Наполеон Б.", "Рокоссовский К.К.", "Колчак А.В."],
         "answer": ["Жуков Г.К.", "Рокоссовский К.К."]
       }
@@ -84,6 +86,7 @@
     "name": "Русская литература XIX века",
     "description": "Золотой век русской литературы: Пушкин, Лермонтов, Гоголь, Достоевский и другие классики.",
     "direction": "Литература",
+    "verdict_type": "key",
     "prompt": "",
     "questions": [
       {
@@ -91,14 +94,14 @@
         "description": "Кто написал роман в стихах 'Евгений Онегин'?",
         "type": "choice",
         "answers": ["Лермонтов", "Пушкин", "Гоголь", "Тургенев"],
-        "answer": ["Пушкин"]
+        "answer": "Пушкин"
       },
       {
         "name": "Герой нашего времени",
         "description": "Как зовут главного героя романа Лермонтова 'Герой нашего времени'?",
         "type": "choice",
         "answers": ["Онегин", "Печорин", "Базаров", "Раскольников"],
-        "answer": ["Печорин"]
+        "answer": "Печорин"
       },
       {
         "name": "Преступление и наказание",
@@ -111,7 +114,7 @@
         "description": "Кто НЕ относится к поэтам серебряного века?",
         "type": "choice",
         "answers": ["Блок", "Ахматова", "Пушкин", "Маяковский"],
-        "answer": ["Пушкин"]
+        "answer": "Пушкин"
       }
     ]
   },
@@ -121,6 +124,7 @@
     "name": "Законы механики Ньютона",
     "description": "Базовые законы классической механики, силы, движение и взаимодействие тел.",
     "direction": "Физика",
+    "verdict_type": "key",
     "prompt": "",
     "questions": [
       {
@@ -133,7 +137,7 @@
           "Сила действия равна силе противодействия",
           "Энергия сохраняется"
         ],
-        "answer": ["Тело сохраняет покой или равномерное движение"]
+        "answer": "Тело сохраняет покой или равномерное движение"
       },
       {
         "name": "Второй закон Ньютона",
@@ -146,7 +150,7 @@
         "description": "Чему равно ускорение свободного падения на Земле (округлённо)?",
         "type": "choice",
         "answers": ["5 м/с²", "9.8 м/с²", "15 м/с²", "20 м/с²"],
-        "answer": ["9.8 м/с²"]
+        "answer": "9.8 м/с²"
       }
     ]
   },
@@ -156,6 +160,7 @@
     "name": "Периодическая система элементов",
     "description": "Химические элементы, их свойства и закономерности в таблице Менделеева.",
     "direction": "Химия",
+    "verdict_type": "key",
     "prompt": "",
     "questions": [
       {
@@ -163,7 +168,7 @@
         "description": "Какой химический элемент имеет наименьшую атомную массу?",
         "type": "choice",
         "answers": ["Гелий", "Водород", "Литий", "Кислород"],
-        "answer": ["Водород"]
+        "answer": "Водород"
       },
       {
         "name": "Химическая формула воды",
@@ -174,7 +179,7 @@
       {
         "name": "Благородные газы",
         "description": "Выберите благородные газы",
-        "type": "choice",
+        "type": "many_choice",
         "answers": ["Неон", "Кислород", "Аргон", "Азот"],
         "answer": ["Неон", "Аргон"]
       },
@@ -183,7 +188,7 @@
         "description": "Чему равна валентность углерода в органических соединениях?",
         "type": "choice",
         "answers": ["2", "3", "4", "5"],
-        "answer": ["4"]
+        "answer": "4"
       }
     ]
   },
@@ -193,6 +198,7 @@
     "name": "Язык программирования Python",
     "description": "Базовые концепции Python: типы данных, циклы, функции и ООП.",
     "direction": "Информатика",
+    "verdict_type": "key",
     "prompt": "",
     "questions": [
       {
@@ -200,7 +206,7 @@
         "description": "Какой тип данных у значения True в Python?",
         "type": "choice",
         "answers": ["str", "int", "bool", "float"],
-        "answer": ["bool"]
+        "answer": "bool"
       },
       {
         "name": "Создание списка",
@@ -213,12 +219,12 @@
         "description": "Что выведет код: for i in range(3): print(i)",
         "type": "choice",
         "answers": ["1 2 3", "0 1 2", "0 1 2 3", "1 2"],
-        "answer": ["0 1 2"]
+        "answer": "0 1 2"
       },
       {
         "name": "Изменяемые типы",
         "description": "Выберите изменяемые (mutable) типы данных в Python",
-        "type": "choice",
+        "type": "many_choice",
         "answers": ["list", "tuple", "dict", "str"],
         "answer": ["list", "dict"]
       }
@@ -230,6 +236,7 @@
     "name": "English Grammar: Tenses",
     "description": "Test your knowledge of English tenses: Present Simple, Past Simple, Present Perfect and more.",
     "direction": "Английский язык",
+    "verdict_type": "key",
     "prompt": "",
     "questions": [
       {
@@ -237,14 +244,14 @@
         "description": "She ___ to school every day.",
         "type": "choice",
         "answers": ["go", "goes", "went", "going"],
-        "answer": ["goes"]
+        "answer": "goes"
       },
       {
         "name": "Past Simple",
         "description": "They ___ a new car last week.",
         "type": "choice",
         "answers": ["buy", "buys", "bought", "buyed"],
-        "answer": ["bought"]
+        "answer": "bought"
       },
       {
         "name": "Present Perfect",
@@ -255,7 +262,7 @@
       {
         "name": "Irregular verbs",
         "description": "Choose the irregular verbs:",
-        "type": "choice",
+        "type": "many_choice",
         "answers": ["walk", "go", "play", "swim"],
         "answer": ["go", "swim"]
       }

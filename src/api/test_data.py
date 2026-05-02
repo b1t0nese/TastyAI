@@ -16,6 +16,8 @@ for test_data in data:
     test.name = test_data["name"]
     test.description = test_data["description"]
     test.questions = json.dumps(test_data["questions"])
+    test.verdict_type = test_data["verdict_type"]
+    test.prompt = test_data["prompt"]
 
     direction = db_sess.query(Direction).filter(Direction.direction == test_data["direction"]).first()
     if not direction:
