@@ -84,61 +84,41 @@ document.addEventListener('DOMContentLoaded', function() {
         const showPrevButton = index !== 0;
         const nextButtonText = index === totalQuestions - 1 ? 'Завершить' : 'Следующий вопрос';
         let questionHtml = '';
+        let elementsHtml = ''
 
         if (question.type == 'choice') {
-          questionHtml = `
-            <div class="question-content ${index === 0 ? 'active' : ''}" style="${index !== 0 ? 'display: none;' : ''}">
-              <div class="p-6 border-b">
-                <h2 class="text-xl font-medium mb-4">${escapeHtml(question.name)}</h2>
-                ${question.description ? `<p class="text-gray-600 mb-4">${escapeHtml(question.description)}</p>` : ''}
-                
-                <div class="space-y-2">
-                  ${generateAnswers(question, index)} 
-                </div>
-              </div>
-              
-              <div class="p-6 flex justify-between test-explanatory-div">
-                  <button class="border border-input hover:bg-muted text-foreground btn btn-outline prev-question bg-background" ${showPrevButton ? 'style="visibility: hidden"' : ''}" data-question-index="${index}">
-                  Назад
-                </button>
-                
-                <p class="text-lg md:text-xl text-muted-foreground mb-8 test-explanatory-text px-3 text-white"></p>
-                
-                <button class="bg-tasty hover:bg-tasty-dark text-white btn btn-primary next-question" data-question-index="${index}">
-                  ${nextButtonText}
-                </button>
-              </div>
-            </div>
-          `;
+          elementsHtml = `${generateAnswers(question, index)}`;
         } else if (question.type == "text") {
-          questionHtml = `
-            <div class="question-content ${index === 0 ? 'active' : ''}" style="${index !== 0 ? 'display: none;' : ''}">
-              <div class="p-6 border-b">
-                <h2 class="text-xl font-medium mb-4">${escapeHtml(question.name)}</h2>
-                ${question.description ? `<p class="text-gray-600 mb-4">${escapeHtml(question.description)}</p>` : ''}
-                
-                <div class="space-y-2">
-                    <input
+          elementsHtml = `<input
                       data-question="${index}" class="w-full rounded-md border border-input bg-background px-3 py-2 text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring text-write"
                       placeholder="Ответ..."
-                    />
-                </div>
-              </div>
+                    />`;
+        }
+
+        questionHtml = `
+          <div class="question-content ${index === 0 ? 'active' : ''}" style="${index !== 0 ? 'display: none;' : ''}">
+            <div class="p-6 border-b">
+              <h2 class="text-xl font-medium mb-4">${escapeHtml(question.name)}</h2>
+              ${question.description ? `<p class="text-gray-600 mb-4">${escapeHtml(question.description)}</p>` : ''}
               
-              <div class="p-6 flex ${showPrevButton ? 'justify-between' : 'justify-end'} test-explanatory-div">
-                <button class="border border-input hover:bg-muted text-foreground btn btn-outline prev-question bg-background" ${showPrevButton ? 'style="visibility: hidden"' : ''}" data-question-index="${index}">
-                  Назад
-                </button>
-                
-                <p class="text-lg md:text-xl text-muted-foreground mb-8 test-explanatory-text px-3 text-white"></p>
-                
-                <button class="bg-tasty hover:bg-tasty-dark text-white btn btn-primary next-question" data-question-index="${index}">
-                  ${nextButtonText}
-                </button>
+              <div class="space-y-2">
+                ${elementsHtml}
               </div>
             </div>
+            
+            <div class="p-6 flex justify-between test-explanatory-div">
+                <button class="border border-input hover:bg-muted text-foreground btn btn-outline prev-question bg-background" ${showPrevButton ? 'style="visibility: hidden"' : ''}" data-question-index="${index}">
+                Назад
+              </button>
+              
+              <p class="text-lg md:text-xl text-muted-foreground mb-8 test-explanatory-text px-3 text-white"></p>
+              
+              <button class="bg-tasty hover:bg-tasty-dark text-white btn btn-primary next-question" data-question-index="${index}">
+                ${nextButtonText}
+              </button>
+            </div>
+          </div>
           `;
-        }
 
         container.insertAdjacentHTML('beforeend', questionHtml);
       });
@@ -149,15 +129,13 @@ document.addEventListener('DOMContentLoaded', function() {
               <h2 class="text-xl font-medium mb-4 result-title"></h2>
               <p class="text-gray-600 mb-4 result-description"></p>
             </div>
-            
             <div class="p-6 flex justify-between">
               <button class="border border-input hover:bg-muted text-foreground btn btn-outline prev-question bg-background">
                 Посмотреть вопросы
               </button>
-                            
-              <button class="bg-tasty hover:bg-tasty-dark text-white btn btn-primary next-question">
+              <a class="bg-tasty hover:bg-tasty-dark text-white btn btn-primary next-question" href='/'>
                 На главную
-              </button>
+              </a>
             </div>
           </div>
         `;
@@ -258,13 +236,9 @@ document.addEventListener('DOMContentLoaded', function() {
             totalQuestions += 1;
             currentQuestion++;
             updateQuestion();
-
-            const attemptData = {
-              attempt_id: data.attempt,
-              answers: userAnswers,
-              finished_at: new Date().toISOString()
-            };
-            console.log(attemptData);
+            userAnswers.forEach((item, index) => { if (item === null) { userAnswers[index] = ""; } });  // Преобразуем пустые ответы в пустоту другого типа
+            answerOptions.forEach(option => { option.querySelector('input').disabled = true; });  // Отключаем все радиокнопки
+            textWrites.forEach(option => { option.disabled = true; });
 
             // Отправляем POST-запрос на /api/solve_test
             fetch(`/api/solve_test?attempt=${data.attempt}`, {
@@ -272,7 +246,7 @@ document.addEventListener('DOMContentLoaded', function() {
               headers: {
                 'Content-Type': 'application/json',
               },
-              body: JSON.stringify(attemptData)
+              body: JSON.stringify(userAnswers)
             })
             .then(response => response.json())
             .then(answers_data => {
@@ -317,33 +291,35 @@ document.addEventListener('DOMContentLoaded', function() {
         
         answerOptions.forEach(option => {
           option.addEventListener('click', function() {
-            // Получить номер вопроса
-            const questionIndex = parseInt(this.getAttribute('data-question'));
-            
-            // Получить номер ответа
-            const answerIndex = parseInt(this.getAttribute('data-answer'));
+            if (!isFinished) {
+              // Получить номер вопроса
+              const questionIndex = parseInt(this.getAttribute('data-question'));
+              
+              // Получить номер ответа
+              const answerIndex = parseInt(this.getAttribute('data-answer'));
 
-            // Получить текст ответа
-            const answerText = this.querySelector('label').innerHTML;
-            
-            // Снять выделение со всех ответов на этот вопрос
-            document.querySelectorAll(`.answer-option[data-question="${questionIndex}"]`).forEach(opt => {
-              opt.classList.remove('selected');
-              const radio = opt.querySelector('input[type="radio"]');
+              // Получить текст ответа
+              const answerText = this.querySelector('label').innerHTML;
+              
+              // Снять выделение со всех ответов на этот вопрос
+              document.querySelectorAll(`.answer-option[data-question="${questionIndex}"]`).forEach(opt => {
+                opt.classList.remove('selected');
+                const radio = opt.querySelector('input[type="radio"]');
+                if (radio) {
+                  radio.checked = false;
+                }
+              });
+              
+              // Выделить текущий ответ
+              this.classList.add('selected');
+              const radio = this.querySelector('input[type="radio"]');
               if (radio) {
-                radio.checked = false;
+                radio.checked = true;
               }
-            });
-            
-            // Выделить текущий ответ
-            this.classList.add('selected');
-            const radio = this.querySelector('input[type="radio"]');
-            if (radio) {
-              radio.checked = true;
+              
+              // Сохранить ответ пользователя
+              userAnswers[questionIndex] = answerText;
             }
-            
-            // Сохранить ответ пользователя
-            userAnswers[questionIndex] = answerText;
           });
         });
 
