@@ -102,7 +102,7 @@ document.addEventListener('DOMContentLoaded', function() {
                   Назад
                 </button>
                 
-                <p class="text-lg md:text-xl text-muted-foreground mb-8 test-explanatory-text px-3"></p>
+                <p class="text-lg md:text-xl text-muted-foreground mb-8 test-explanatory-text px-3 text-white"></p>
                 
                 <button class="bg-tasty hover:bg-tasty-dark text-white btn btn-primary next-question" data-question-index="${index}">
                   ${nextButtonText}
@@ -130,7 +130,7 @@ document.addEventListener('DOMContentLoaded', function() {
                   Назад
                 </button>
                 
-                <p class="text-lg md:text-xl text-muted-foreground mb-8 test-explanatory-text px-3"></p>
+                <p class="text-lg md:text-xl text-muted-foreground mb-8 test-explanatory-text px-3 text-white"></p>
                 
                 <button class="bg-tasty hover:bg-tasty-dark text-white btn btn-primary next-question" data-question-index="${index}">
                   ${nextButtonText}
@@ -142,6 +142,27 @@ document.addEventListener('DOMContentLoaded', function() {
 
         container.insertAdjacentHTML('beforeend', questionHtml);
       });
+
+      resultHtml = `
+          <div class="question-content" style="display: none">
+            <div class="p-6 border-b">
+              <h2 class="text-xl font-medium mb-4 result-title"></h2>
+              <p class="text-gray-600 mb-4 result-description"></p>
+            </div>
+            
+            <div class="p-6 flex justify-between">
+              <button class="border border-input hover:bg-muted text-foreground btn btn-outline prev-question bg-background">
+                Посмотреть вопросы
+              </button>
+                            
+              <button class="bg-tasty hover:bg-tasty-dark text-white btn btn-primary next-question">
+                На главную
+              </button>
+            </div>
+          </div>
+        `;
+
+        container.insertAdjacentHTML('beforeend', resultHtml);
     }
 
     document.querySelector('.start-test').addEventListener('click', function() {
@@ -163,7 +184,7 @@ document.addEventListener('DOMContentLoaded', function() {
         
         // Текущий вопрос
         let currentQuestion = 0;
-        let totalQuestions = questions.length;
+        let totalQuestions = questions.length - 1;
         let isFinished = false;
         
         // Счетчик ответов
@@ -183,7 +204,11 @@ document.addEventListener('DOMContentLoaded', function() {
           
           // Обновление счетчика вопросов
           if (questionCounter) {
-            questionCounter.textContent = `${currentQuestion + 1}/${totalQuestions}`;
+            if (!isFinished) {
+              questionCounter.textContent = `${currentQuestion + 1}/${totalQuestions}`;
+            } else {
+              questionCounter.textContent = `${currentQuestion + 1}/${totalQuestions - 1}`;
+            }
           }
           
           // Обновление прогресс-бара
@@ -221,35 +246,84 @@ document.addEventListener('DOMContentLoaded', function() {
           });
         });
 
+        // Кнопка для возвращения с блока результатов
+        prevButtons[prevButtons.length - 1].addEventListener('click', function() {
+          document.querySelector('.progressdiv').style.display = 'block';  // Показываем полоску с результатами
+        });
+
         // Кнопка "Завершить"
-        nextButtons[nextButtons.length - 1].addEventListener('click', function() {
+        nextButtons[nextButtons.length - 2].addEventListener('click', function() {
           if (!isFinished) {
             isFinished = true;
             totalQuestions += 1;
+            currentQuestion++;
+            updateQuestion();
+
             // Типо наш json результат
             const answers_data = {
-              "attempt": 1,
-              "answers": ["Лермонтов", "Онегин", "1", "Маяковский"]
+                "answers": [
+                    {
+                        "answer": "2x",
+                        "description": "Правильно.",
+                        "is_correct": true
+                    },
+                    {
+                        "answer": "2",
+                        "description": "Правильно.",
+                        "is_correct": true
+                    },
+                    {
+                        "answer": "0",
+                        "description": "Правильно.",
+                        "is_correct": true
+                    },
+                    {
+                        "answer": "Нет",
+                        "description": "Неправильно. Правильный ответ: Угол наклона касательной",
+                        "is_correct": false
+                    }
+                ],
+                "finished_at": "2026-05-02T21:36:42.379406",
+                "id": "4a230bcc-6ff0-4664-9427-e4099b44f4d3",
+                "started_at": "2026-05-02T21:30:05.489283",
+                "test_id": 1,
+                "user": null,
+                "verdict": "Результат: 3/4\nВопрос №1: правильно\nВопрос №2: правильно\nВопрос №3: правильно\nВопрос №4: неправильно"
             }
 
+            // Устанавливаем результыта в одноименной вкладке
+            document.querySelector('.result-title').innerHTML = answers_data.verdict.split('\n')[0]
+            document.querySelector('.result-description').innerHTML = answers_data.verdict.split('\n').splice(1).map(item => {
+              const [question, answer] = item.split(': ');
+              const color = answer === 'правильно' ? 'green' : 'red';
+              return `${question}: <text style='color: ${color}'>${answer}</text>`;
+            }).join('<br>') + '<br>';
+            
+            // Меняем элементы под ответ
             document.querySelectorAll('.test-explanatory-text').forEach((text, index) => {
-              if (answers_data.answers[index] == userAnswers[index]) {
-                text.innerHTML = 'Вы ответили правильно!';
-              } else {
-                text.innerHTML = 'Вы ошиблись!';
-              }
+              text.innerHTML = answers_data.answers[index].description;
             });
 
             document.querySelectorAll('.test-explanatory-div').forEach((div, index) => {
-              if (answers_data.answers[index] == userAnswers[index]) {
+              if (answers_data.answers[index].is_correct == true) {
                 div.classList.add('answer-correct');
               } else {
                 div.classList.add('answer-incorrect');
               }
             });
-          } else {
 
+            // Устанавливаем все конпкам текст дальше
+            nextButtons.forEach(button => {
+              if (button == nextButtons[nextButtons.length - 1]) {
+                button.innerHTML = "На главную";
+              } else if (button == nextButtons[nextButtons.length - 2]) {
+                button.innerHTML = "К результатам";
+              } else {
+                button.innerHTML = "Дальше";
+              }
+            });
           }
+          document.querySelector('.progressdiv').style.display = 'none';  // Скрываем полоску с результатами
         });
         
         // Для работы вопросов с выбором ответа
