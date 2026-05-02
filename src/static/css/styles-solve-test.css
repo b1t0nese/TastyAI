@@ -221,6 +221,10 @@ a {
   position: absolute;
 }
 
+.text-align-center {
+  text-align: center;
+}
+
 .right-3 {
   right: 0.75rem;
 }
@@ -448,12 +452,12 @@ a {
   color: hsl(var(--muted-foreground));
 }
 
-.text-correct {
-  color: #10b981;
+.answer-correct {
+  background-color: #53d047;
 }
 
-.text-incorrect {
-  color: #ef4444;
+.answer-incorrect {
+  background-color: #ef4444;
 }
 
 .mt-6 {
