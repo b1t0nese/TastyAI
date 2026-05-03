@@ -1,13 +1,97 @@
 from . import api_bp
-from flask import jsonify, request
+from flask import jsonify, request, redirect, url_for, make_response, abort
 from sqlalchemy import func, or_
 from .db_manager import db_session
 from .db_manager.__all_models import *
+from web.auth import RegisterForm, AuthForm
 from .tastyai import tastyai
+
 import json
 import os
 
 db_session.global_init(os.path.join(os.path.dirname(__file__), "db", "db.sqlite3"))
+
+
+
+@api_bp.route('logout')
+def logout():
+    session_token = request.cookies.get("session_token")
+    dnow = datetime.datetime.now()
+    db_sess = db_session.create_session()
+    auth = db_sess.query(Auth).filter(Auth.session_token==session_token).first()
+    if auth and request.headers.get('User-Agent', '') == auth.user_agent and dnow < auth.logout_at:
+        auth.logout_at = dnow
+        db_sess.commit()
+        return "", 200
+
+
+@api_bp.route('/who_am_i')
+def who_am_i():
+    session_token = request.cookies.get("session_token")
+    dnow = datetime.datetime.now()
+    db_sess = db_session.create_session()
+    auth = db_sess.query(Auth).filter(Auth.session_token==session_token).first()
+    if auth and request.headers.get('User-Agent', '') == auth.user_agent and dnow < auth.logout_at:
+        auth.last_activity = dnow
+        db_sess.commit()
+        return jsonify(auth.to_dict()), 200
+    return abort(403)
+
+
+@api_bp.route('/sign', methods=['POST'])
+def sign():
+    form_type = request.form.get('form_type')
+
+    if form_type == 'login':
+        form = AuthForm()
+        if form.validate_on_submit():
+            db_sess = db_session.create_session()
+            user = db_sess.query(User).filter(User.name == form.name.data).first()
+            if user.check_password(form.password.data):
+                auth = Auth()
+                auth.user_id = user.id
+                auth.user_agent = request.headers.get('User-Agent', '')
+                db_sess.add(auth)
+                db_sess.commit()
+                response = make_response(redirect(url_for('web.hello')))
+                response.set_cookie(
+                    'session_token', auth.session_token,
+                    httponly=True, # secure=True,
+                    samesite='Lax', max_age=30*24*60*60)
+                return response
+            else:
+                return redirect(url_for('web.sign', error_type='auth_error', message='Неверное имя пользователя или пароль'))
+        else:
+            error_messages = []
+            for field, errors in form.errors.items():
+                error_messages.extend(errors)
+            return redirect(url_for('web.sign', error_type='auth_error', message='; '.join(error_messages)))
+
+    elif form_type == 'register':
+        form = RegisterForm()
+        if form.validate_on_submit():
+            policy_check = request.form.get('policy_check')
+            if not policy_check:
+                return redirect(url_for('web.sign', error_type='reg_error', message='Подтвердите соглашение с условиями использования!'))
+            if form.password.data != form.password_again.data:
+                return redirect(url_for('web.sign', error_type='reg_error', message='Введённые пароли не совпадают!'))
+            db_sess = db_session.create_session()
+            if db_sess.query(User).filter(User.name == form.name.data).first() is not None:
+                return redirect(url_for('web.sign', error_type='reg_error', message='Такой пользователь уже существует.'))
+            user = User()
+            user.name = form.name.data
+            user.set_password(form.password.data)
+            db_sess.add(user)
+            db_sess.commit()
+            return redirect("/")
+        else:
+            error_messages = []
+            for field, errors in form.errors.items():
+                error_messages.extend(errors)
+            return redirect(url_for('web.sign', error_type='reg_error', message='; '.join(error_messages)))
+
+    else:
+        return redirect(url_for('web.sign'))
 
 
 
@@ -62,7 +146,6 @@ def get_test():
         return jsonify(test), 200
     else:
         return "Test was not found", 404
-
 
 
 @api_bp.route("/solve_test", methods=["POST"])

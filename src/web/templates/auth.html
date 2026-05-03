@@ -24,48 +24,39 @@
                 Введите свои данные для входа в систему
               </p>
               
-              <form class="space-y-4" method="post" action="{{ url_for('web.sign') }}?type=auth">
+              <form class="space-y-4" method="post" action="/api/sign">
+                {{ auth_form.hidden_tag() }}
+                <input type="hidden" name="form_type" value="login">
+                
                 <div>
-                  <label for="username_auth" class="block text-sm font-medium mb-1">
-                    Имя
-                  </label>
-                  <input
-                    type="text"
-                    id="username_auth"
-                    name="username_auth"
-                    class="w-full rounded-md border border-input bg-background px-3 py-2 text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
-                    placeholder="Ваше имя"
-                  />
+                  {{ auth_form.name.label(class="block text-sm font-medium mb-1") }}
+                  {{ auth_form.name(class="w-full rounded-md border border-input bg-background px-3 py-2 text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring", placeholder="Ваше имя") }}
+                  {% for error in auth_form.name.errors %}
+                    <p class="text-sm text-red-500 mt-1">{{ error }}</p>
+                  {% endfor %}
                 </div>
                 
                 <div>
-                  <label for="password_auth" class="block text-sm font-medium mb-1">
-                    Пароль
-                  </label>
-                  <input
-                    type="password"
-                    id="password_auth"
-                    name="password_auth"
-                    class="w-full rounded-md border border-input bg-background px-3 py-2 text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
-                    placeholder="••••••••"
-                  />
+                  {{ auth_form.password.label(class="block text-sm font-medium mb-1") }}
+                  {{ auth_form.password(class="w-full rounded-md border border-input bg-background px-3 py-2 text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring", placeholder="••••••••") }}
+                  {% for error in auth_form.password.errors %}
+                    <p class="text-sm text-red-500 mt-1">{{ error }}</p>
+                  {% endfor %}
                 </div>
                 
                 <div class="flex items-center justify-between">
                   <a href="#" class="text-sm text-tasty hover:underline">Забыли пароль?</a>
                 </div>
                 
-                <button type="submit" class="w-full bg-tasty hover:bg-tasty-dark text-white btn btn-primary py-2">
-                  Войти
-                </button>
+                {{ auth_form.submit(class="w-full bg-tasty hover:bg-tasty-dark text-white btn btn-primary py-2") }}
                 
                 <div class="text-center mt-4">
                   <p class="text-sm text-muted-foreground">
                     Нет аккаунта?
                     <a href="#" class="text-tasty hover:underline auth-switch" data-target="register">Зарегистрироваться</a>
                   </p>
-                  {% if error %}
-                    <text style="color: red;" id="auth_error_message">{{ error }}</text>
+                  {% if message and message_type == 'auth_error' %}
+                    <text style="color: red;" id="auth_error_message">{{ message }}</text>
                   {% endif %}
                 </div>
               </form>
@@ -78,62 +69,48 @@
                 Зарегистрируйтесь, чтобы получить доступ ко всем функциям платформы
               </p>
               
-              <form method="post" action="{{ url_for('web.sign') }}?type=reg" class="space-y-4">
+              <form method="post" action="/api/sign" class="space-y-4">
+                {{ register_form.hidden_tag() }}
+                <input type="hidden" name="form_type" value="register">
+                
                 <div>
-                  <label for="username_reg" class="block text-sm font-medium mb-1">
-                    Имя
-                  </label>
-                  <input
-                    type="text"
-                    id="username_reg"
-                    name="username_reg"
-                    class="w-full rounded-md border border-input bg-background px-3 py-2 text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
-                    placeholder="Ваше имя"
-                  />
+                  {{ register_form.name.label(class="block text-sm font-medium mb-1") }}
+                  {{ register_form.name(class="w-full rounded-md border border-input bg-background px-3 py-2 text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring", placeholder="Ваше имя") }}
+                  {% for error in register_form.name.errors %}
+                    <p class="text-sm text-red-500 mt-1">{{ error }}</p>
+                  {% endfor %}
                 </div>
 
                 <div>
-                  <label for="password_reg" class="block text-sm font-medium mb-1">
-                    Пароль
-                  </label>
-                  <input
-                    type="password"
-                    id="password_reg"
-                    name="password_reg"
-                    class="w-full rounded-md border border-input bg-background px-3 py-2 text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
-                    placeholder="••••••••"
-                  />
+                  {{ register_form.password.label(class="block text-sm font-medium mb-1") }}
+                  {{ register_form.password(class="w-full rounded-md border border-input bg-background px-3 py-2 text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring", placeholder="••••••••") }}
+                  {% for error in register_form.password.errors %}
+                    <p class="text-sm text-red-500 mt-1">{{ error }}</p>
+                  {% endfor %}
                 </div>
                 
                 <div>
-                  <label for="password_again" class="block text-sm font-medium mb-1">
-                    Подтверждение пароля
-                  </label>
-                  <input
-                    type="password"
-                    id="password_again"
-                    name="password_again"
-                    class="w-full rounded-md border border-input bg-background px-3 py-2 text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
-                    placeholder="••••••••"
-                  />
+                  {{ register_form.password_again.label(class="block text-sm font-medium mb-1") }}
+                  {{ register_form.password_again(class="w-full rounded-md border border-input bg-background px-3 py-2 text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring", placeholder="••••••••") }}
+                  {% for error in register_form.password_again.errors %}
+                    <p class="text-sm text-red-500 mt-1">{{ error }}</p>
+                  {% endfor %}
                 </div>
                 
-                <label for="policy_check" class="flex items-center">
-                  <input type="checkbox" name="policy_check" id="policy_check" class="mr-2" />
-                  <span class="text-sm">Я согласен с <a class="text-tasty hover:underline">условиями использования</a></span>
+                <label class="flex items-center">
+                  <input type="checkbox" name="policy_check" id="policy_check" class="mr-2" required />
+                  <span class="text-sm">Я согласен с <a href="#" class="text-tasty hover:underline">условиями использования</a></span>
                 </label>
                 
-                <button type="submit" class="w-full bg-tasty hover:bg-tasty-dark text-white btn btn-primary py-2">
-                  Зарегистрироваться
-                </button>
+                {{ register_form.submit(class="w-full bg-tasty hover:bg-tasty-dark text-white btn btn-primary py-2") }}
                 
                 <div class="text-center mt-4">
                   <p class="text-sm text-muted-foreground">
                     Уже есть аккаунт?
                     <a href="#" class="text-tasty hover:underline auth-switch" data-target="login">Войти</a>
                   </p>
-                  {% if error %}
-                    <text style="color: red;" id="reg_error_message">{{ error }}</text>
+                  {% if message and message_type == 'reg_error' %}
+                    <text style="color: red;" id="reg_error_message">{{ message }}</text>
                   {% endif %}
                 </div>
               </form>
@@ -145,4 +122,56 @@
   </main>
 
   <script src="static/js/auth.js"></script>
+  
+  <script>
+    // Скрипт для переключения табов с сохранением функциональности
+    document.addEventListener('DOMContentLoaded', function() {
+      const tabs = document.querySelectorAll('.auth-tab');
+      const loginContent = document.getElementById('login-tab');
+      const registerContent = document.getElementById('register-tab');
+      
+      // Функция переключения табов
+      function switchTab(tabId) {
+        // Переключаем активный класс у табов
+        tabs.forEach(tab => {
+          if (tab.getAttribute('data-tab') === tabId) {
+            tab.classList.add('active');
+          } else {
+            tab.classList.remove('active');
+          }
+        });
+        
+        // Показываем нужный контент
+        if (tabId === 'login') {
+          loginContent.style.display = 'block';
+          registerContent.style.display = 'none';
+        } else {
+          loginContent.style.display = 'none';
+          registerContent.style.display = 'block';
+        }
+      }
+      
+      // Добавляем обработчики на табы
+      tabs.forEach(tab => {
+        tab.addEventListener('click', function() {
+          const tabId = this.getAttribute('data-tab');
+          switchTab(tabId);
+        });
+      });
+      
+      // Обработка ссылок переключения внутри форм
+      document.querySelectorAll('.auth-switch').forEach(link => {
+        link.addEventListener('click', function(e) {
+          e.preventDefault();
+          const target = this.getAttribute('data-target');
+          switchTab(target);
+        });
+      });
+      
+      // Показываем нужный таб в зависимости от ошибки
+      if (errorType === 'reg_error') { switchTab('register'); }
+      else if (errorType === 'auth_error') { switchTab('login'); }
+      else { switchTab('login'); }
+    });
+  </script>
 {% endblock %}
