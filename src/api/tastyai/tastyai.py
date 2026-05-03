@@ -17,6 +17,21 @@ class AttemptException(Exception):
 
 
 
+def lower_answer(answer):
+    if isinstance(answer, list):
+        return list(map(lambda x: x.lower(), answer))
+    else:
+        return answer.lower()
+
+
+def nospace_answer(answer):
+    if isinstance(answer, list):
+        return list(map(lambda x: x.replace(" ", ""), answer))
+    else:
+        return answer.replace(" ", "")
+
+
+
 def end_test(attempt_id: int, answers: list, db_sess: Session, only_data: bool=False):
     attempt = db_sess.query(Attempt).filter(Attempt.id == attempt_id).first()
     if not attempt:
@@ -24,22 +39,36 @@ def end_test(attempt_id: int, answers: list, db_sess: Session, only_data: bool=F
     if not only_data:
         if attempt.finished_at:
             raise AttemptException(f"attempt {attempt_id} is finished")
-        test = db_sess.query(Test).filter(Test.id == Attempt.test_id).first()
+        test = db_sess.query(Test).filter(Test.id == attempt.test_id).first()
         if not test:
-            raise TestException(f"test with id {Attempt.test_id} was not found")
+            raise TestException(f"test with id {attempt.test_id} was not found")
         questions = json.loads(test.questions)
         if len(answers) != len(questions):
             raise TestException("answers lenght != test questions lenght.")
 
         attempt.finished_at = datetime.datetime.now()
         if test.verdict_type=="key":
+
             attempt_answers = []
             for i in range(len(answers)):
                 is_correct = None
+                actions = json.loads(questions[i].get("actions", default="['lower']"))
+                user_answer, quest_answer = answers[i], questions[i]["answer"]
+                if actions:
+                    if "lower" in actions:
+                        user_answer = lower_answer(user_answer)
+                        quest_answer = lower_answer(quest_answer)
+                    if "nospace" in actions:
+                        user_answer = nospace_answer(user_answer)
+                        quest_answer = nospace_answer(quest_answer)
                 if questions[i]["type"] in ["choice", "text"]:
-                    is_correct = answers[i].lower()==questions[i]["answer"].lower()
+                    if "many_answers" in actions:
+                        is_correct = user_answer in quest_answer
+                    else:
+                        is_correct = user_answer==quest_answer
                 elif questions[i]["type"]=="many_choice":
                     is_correct = sorted(answers[i])==sorted(questions[i]["answer"])
+
                 description = "Правильно." if is_correct else f"Неправильно. Правильный ответ: {
                     ", ".join(questions[i]["answer"]) if isinstance(questions[i]["answer"], list) else questions[i]["answer"]}"
                 attempt_answers.append({"answer": answers[i], "is_correct": is_correct, "description": description})

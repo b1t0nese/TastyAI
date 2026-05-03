@@ -18,6 +18,7 @@ class Test(SqlAlchemyBase, JsonSerializableMixin):
     questions = sqlalchemy.Column(sqlalchemy.String, nullable=True)
     verdict_type = sqlalchemy.Column(sqlalchemy.String, default="key")
     prompt = sqlalchemy.Column(sqlalchemy.String, nullable=True)
+    actions = sqlalchemy.Column(sqlalchemy.String, nullable=True)
 
     direction_id = sqlalchemy.Column(sqlalchemy.Integer, sqlalchemy.ForeignKey("directions.id"), nullable=True)
     direction = orm.relationship('Direction')

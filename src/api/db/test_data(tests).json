@@ -132,7 +132,7 @@
         "description": "Что гласит первый закон Ньютона?",
         "type": "choice",
         "answers": [
-          "F = ma",
+          "F=ma",
           "Тело сохраняет покой или равномерное движение",
           "Сила действия равна силе противодействия",
           "Энергия сохраняется"
@@ -143,7 +143,8 @@
         "name": "Второй закон Ньютона",
         "description": "Напишите формулу второго закона Ньютона",
         "type": "text",
-        "answer": "F = ma"
+        "answer": "F=ma",
+        "actions": ["nospace"]
       },
       {
         "name": "Сила тяжести",
@@ -212,14 +213,16 @@
         "name": "Создание списка",
         "description": "Напишите код для создания списка из чисел от 1 до 5",
         "type": "text",
-        "answer": "[1, 2, 3, 4, 5]"
+        "answer": ["[1, 2, 3, 4, 5]", "list(for i in range(1, 6))"],
+        "actions": ["nospace", "many_answers"]
       },
       {
         "name": "Цикл for",
         "description": "Что выведет код: for i in range(3): print(i)",
         "type": "choice",
         "answers": ["1 2 3", "0 1 2", "0 1 2 3", "1 2"],
-        "answer": "0 1 2"
+        "answer": "0 1 2",
+        "actions": ["nospace"]
       },
       {
         "name": "Изменяемые типы",
