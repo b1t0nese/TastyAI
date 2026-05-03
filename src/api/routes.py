@@ -53,7 +53,7 @@ def sign():
                 auth.user_agent = request.headers.get('User-Agent', '')
                 db_sess.add(auth)
                 db_sess.commit()
-                response = make_response(redirect(url_for('web.hello')))
+                response = make_response(redirect("/"))
                 response.set_cookie(
                     'session_token', auth.session_token,
                     httponly=True, # secure=True,
