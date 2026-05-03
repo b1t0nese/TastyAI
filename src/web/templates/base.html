@@ -35,7 +35,7 @@
           if (event.key === "Enter") {
             const searchQuery = document.getElementById("searchField").value;
             if (searchQuery) {
-              window.location.href = `tests?search_query=${encodeURIComponent(searchQuery)}`;
+              window.location.href = `tests.html?search_query=${encodeURIComponent(searchQuery)}`;
             }
           }
         }
@@ -43,7 +43,7 @@
         function clickBtn() {
           const searchQuery = document.getElementById("searchField").value;
           if (searchQuery) {
-            window.location.href = `tests?search_query=${encodeURIComponent(searchQuery)}`;
+            window.location.href = `tests.html?search_query=${encodeURIComponent(searchQuery)}`;
           }
         }
       </script>
@@ -52,12 +52,12 @@
       <!-- Навигация -->
       
       <nav class="hidden md:flex items-center gap-1 animate-fade-in">
-        <a href="tests" class="nav-link">Готовые тесты</a>
-        <a href="create_test" class="nav-link">Создать тест</a>
-        <a href="sign">
+        <a href="tests.html" class="nav-link">Готовые тесты</a>
+        <a href="create_test.html" class="nav-link">Создать тест</a>
+        <a href="auth.html">
           {% block usertext %}
             <button class="ml-2 border-tasty text-tasty hover:bg-tasty hover:text-white btn btn-outline">
-              {{ username }}
+              {{ username | default('Авторизация') }}
             </button>
           {% endblock %}
         </a>
@@ -84,9 +84,9 @@
         </form>
         
         <nav class="flex flex-col items-start gap-3">
-          <a href="tests" class="text-lg font-medium">Готовые тесты</a>
-          <a href="create_test" class="text-lg font-medium">Создать тест</a>
-          <a href="sign">
+          <a href="tests.html" class="text-lg font-medium">Готовые тесты</a>
+          <a href="create_test.html" class="text-lg font-medium">Создать тест</a>
+          <a href="auth.html">
             <button class="w-full bg-tasty hover:bg-tasty-dark text-white btn btn-primary">
               {{ username }}
             </button>

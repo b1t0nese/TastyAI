@@ -24,7 +24,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
     // Создаем основной div карточки
     const card = document.createElement('a');
-    card.href = `test_solution?test=${id}`;
+    card.href = `test_solution.html?test=${id}`;
     card.className = "card card-hover animate-scale-in test-card";
 
     const imageContainer = document.createElement('div');
