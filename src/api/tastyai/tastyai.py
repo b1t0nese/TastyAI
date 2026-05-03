@@ -45,14 +45,13 @@ def end_test(attempt_id: int, answers: list, db_sess: Session, only_data: bool=F
         questions = json.loads(test.questions)
         if len(answers) != len(questions):
             raise TestException("answers lenght != test questions lenght.")
-
         attempt.finished_at = datetime.datetime.now()
-        if test.verdict_type=="key":
 
+        if test.verdict_type=="key":
             attempt_answers = []
             for i in range(len(answers)):
                 is_correct = None
-                actions = json.loads(questions[i].get("actions", default="['lower']"))
+                actions = questions[i].get("actions", ["lower"])
                 user_answer, quest_answer = answers[i], questions[i]["answer"]
                 if actions:
                     if "lower" in actions:
@@ -68,10 +67,10 @@ def end_test(attempt_id: int, answers: list, db_sess: Session, only_data: bool=F
                         is_correct = user_answer==quest_answer
                 elif questions[i]["type"]=="many_choice":
                     is_correct = sorted(answers[i])==sorted(questions[i]["answer"])
-
                 description = "Правильно." if is_correct else f"Неправильно. Правильный ответ: {
                     ", ".join(questions[i]["answer"]) if isinstance(questions[i]["answer"], list) else questions[i]["answer"]}"
                 attempt_answers.append({"answer": answers[i], "is_correct": is_correct, "description": description})
+
             attempt.answers = json.dumps(attempt_answers)
             attempt.verdict = f"""Результат: {len(list(filter(lambda x: x["is_correct"], attempt_answers)))}/{len(questions)}
     {"\n".join([f"Вопрос №{i+1}: {"" if attempt_answers[i]["is_correct"] else "не"}правильно" for i in range(len(attempt_answers))])}"""
