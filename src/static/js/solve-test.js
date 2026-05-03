@@ -120,7 +120,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 Назад
               </button>
               
-              <p class="text-lg md:text-xl text-muted-foreground mb-8 test-explanatory-text px-3 text-white"></p>
+              <p class="text-lg md:text-xl text-muted-foreground test-explanatory-text px-3 text-white"></p>
               
               <button class="bg-tasty hover:bg-tasty-dark text-white btn btn-primary next-question" data-question-index="${index}">
                 ${nextButtonText}
@@ -200,7 +200,11 @@ document.addEventListener('DOMContentLoaded', function() {
           
           // Обновление прогресс-бара
           if (progressBar) {
-            progressBar.style.width = `${((currentQuestion + 1) / totalQuestions) * 100}%`;
+            if (!isFinished) {
+              progressBar.style.width = `${((currentQuestion + 1) / totalQuestions) * 100}%`;
+            } else {
+              progressBar.style.width = `${((currentQuestion + 1) / (totalQuestions - 1)) * 100}%`;
+            }
           }
           
           // Показать/скрыть кнопку "Назад"
