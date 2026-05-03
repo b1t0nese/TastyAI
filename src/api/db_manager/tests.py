@@ -1,9 +1,20 @@
-from .db_session import SqlAlchemyBase
-from .json_mixin import JsonSerializableMixin
 from sqlalchemy import orm
 import sqlalchemy
 import datetime
 import uuid
+
+from .db_session import SqlAlchemyBase
+from .json_mixin import JsonSerializableMixin
+
+
+
+class TestException(Exception):
+    pass
+
+
+class AttemptException(Exception):
+    pass
+
 
 
 class Test(SqlAlchemyBase, JsonSerializableMixin):

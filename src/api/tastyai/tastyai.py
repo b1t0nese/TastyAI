@@ -1,19 +1,13 @@
 from sqlalchemy.orm import Session
-from ..db_manager.__all_models import *
 import datetime
 import json
 import os
 
+from ..db_manager.__all_models import *
+from deep_api import dpsk
+
 
 api_key = os.getenv("DEEPSEEK_API_KEY")
-
-
-class TestException(Exception):
-    pass
-
-
-class AttemptException(Exception):
-    pass
 
 
 

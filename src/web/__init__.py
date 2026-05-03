@@ -1,10 +1,12 @@
 from flask import Blueprint, request, render_template, abort
-from .auth import RegisterForm, AuthForm
 import os
+
+from .auth import RegisterForm, AuthForm
 
 
 web_bp = Blueprint('web', __name__, template_folder=os.path.join(
     os.path.dirname(__file__), "templates"))
+
 
 
 @web_bp.route('/auth.html')

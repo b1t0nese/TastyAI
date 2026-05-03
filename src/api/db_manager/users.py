@@ -1,10 +1,17 @@
 from werkzeug.security import generate_password_hash, check_password_hash
-from .db_session import SqlAlchemyBase
-from .json_mixin import JsonSerializableMixin
 from sqlalchemy import orm
 import sqlalchemy
 import datetime
 import uuid
+
+from .db_session import SqlAlchemyBase
+from .json_mixin import JsonSerializableMixin
+
+
+
+class AuthException(Exception):
+    pass
+
 
 
 class User(SqlAlchemyBase, JsonSerializableMixin):

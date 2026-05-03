@@ -1,41 +1,55 @@
-from . import api_bp
-from flask import jsonify, request, redirect, url_for, make_response, abort
+from flask import jsonify, request, redirect, url_for, make_response
 from sqlalchemy import func, or_
-from .db_manager import db_session
-from .db_manager.__all_models import *
-from web.auth import RegisterForm, AuthForm
-from .tastyai import tastyai
-
 import json
 import os
+
+from web.auth import RegisterForm, AuthForm
+from . import api_bp
+from .db_manager import db_session
+from .db_manager.__all_models import *
+from .tastyai import tastyai
+
 
 db_session.global_init(os.path.join(os.path.dirname(__file__), "db", "db.sqlite3"))
 
 
 
-@api_bp.route('logout')
-def logout():
-    session_token = request.cookies.get("session_token")
+def get_auth_session(requestt, db_sess):
+    session_token = requestt.cookies.get("session_token")
     dnow = datetime.datetime.now()
-    db_sess = db_session.create_session()
     auth = db_sess.query(Auth).filter(Auth.session_token==session_token).first()
-    if auth and request.headers.get('User-Agent', '') == auth.user_agent and dnow < auth.logout_at:
-        auth.logout_at = dnow
+    if not auth:
+        raise AuthException("Auth was not found")
+    elif requestt.headers.get('User-Agent', '') == auth.user_agent:
+        raise AuthException("user_agent != Auth.user_agent")
+    if dnow < auth.logout_at:
+        raise AuthException("The session was completed.")
+    auth.last_activity = dnow
+    return auth
+
+
+
+@api_bp.route('/logout')
+def logout():
+    db_sess = db_session.create_session()
+    try:
+        auth = get_auth_session(request, db_sess)
+        auth.logout_at = auth.last_activity
         db_sess.commit()
-        return "", 200
+        return "Successful exit.", 200
+    except Exception as e:
+        return f"{e.__class__.__name__}: {e}", 403
 
 
 @api_bp.route('/who_am_i')
 def who_am_i():
-    session_token = request.cookies.get("session_token")
-    dnow = datetime.datetime.now()
     db_sess = db_session.create_session()
-    auth = db_sess.query(Auth).filter(Auth.session_token==session_token).first()
-    if auth and request.headers.get('User-Agent', '') == auth.user_agent and dnow < auth.logout_at:
-        auth.last_activity = dnow
+    try:
+        auth = get_auth_session(request, db_sess)
         db_sess.commit()
         return jsonify(auth.to_dict()), 200
-    return abort(403)
+    except Exception as e:
+        return f"{e.__class__.__name__}: {e}", 403
 
 
 @api_bp.route('/sign', methods=['POST'])
@@ -53,7 +67,7 @@ def sign():
                 auth.user_agent = request.headers.get('User-Agent', '')
                 db_sess.add(auth)
                 db_sess.commit()
-                response = make_response(redirect(url_for('web.hello')))
+                response = make_response(redirect("/"))
                 response.set_cookie(
                     'session_token', auth.session_token,
                     httponly=True, # secure=True,

@@ -1,6 +1,6 @@
-import sqlalchemy as sa
-import sqlalchemy.orm as orm
 from sqlalchemy.orm import Session
+import sqlalchemy.orm as orm
+import sqlalchemy as sa
 
 SqlAlchemyBase = orm.declarative_base()
 
