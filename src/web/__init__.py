@@ -1,9 +1,19 @@
-from flask import Blueprint, render_template, abort
+from flask import Blueprint, request, render_template, abort
+from .auth import RegisterForm, AuthForm
 import os
 
 
 web_bp = Blueprint('web', __name__, template_folder=os.path.join(
     os.path.dirname(__file__), "templates"))
+
+
+@web_bp.route('/auth.html')
+def sign():
+    return render_template(
+        'auth.html', auth_form=AuthForm(),
+        register_form=RegisterForm(),
+        message=request.args.get('message'),
+        message_type=request.args.get('error_type'))
 
 
 @web_bp.route('/', defaults={'filename': 'index.html'})
