@@ -70,6 +70,13 @@ document.addEventListener('DOMContentLoaded', function() {
               <label for="q${questionIndex + 1}-a${answerIndex + 1}">${escapeHtml(answer)}</label>
             </div>
           `).join('');
+        } else if (question.type === 'many_choice' && Array.isArray(question.answers)) {
+          return question.answers.map((answer, answerIndex) => `
+            <div class="answer-option" data-question="${questionIndex}" data-answer="${answerIndex}">
+              <input type="checkbox" id="q${questionIndex + 1}-a${answerIndex + 1}" name="question${questionIndex}" />
+              <label for="q${questionIndex + 1}-a${answerIndex + 1}">${escapeHtml(answer)}</label>
+            </div>
+          `).join('');
         }
         return '<p class="text-gray-500">Некорректный тип вопроса или отсутствуют варианты ответов</p>';
       }
@@ -93,6 +100,8 @@ document.addEventListener('DOMContentLoaded', function() {
                       data-question="${index}" class="w-full rounded-md border border-input bg-background px-3 py-2 text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring text-write"
                       placeholder="Ответ..."
                     />`;
+        } else if (question.type == "many_choice") {
+          elementsHtml = `${generateAnswers(question, index)}`;
         }
 
         questionHtml = `
@@ -286,7 +295,8 @@ document.addEventListener('DOMContentLoaded', function() {
           document.querySelector('.progressdiv').style.display = 'none';  // Скрываем полоску с результатами
         });
         
-        // Для работы вопросов с выбором ответа
+        // ДАЛЬШЕ МЕХАНИКИ ВОПРОСОВ
+        // Для работы вопросов с выбором ответа и нескольких ответов
         const answerOptions = document.querySelectorAll('.answer-option');
         
         answerOptions.forEach(option => {
@@ -294,31 +304,60 @@ document.addEventListener('DOMContentLoaded', function() {
             if (!isFinished) {
               // Получить номер вопроса
               const questionIndex = parseInt(this.getAttribute('data-question'));
-              
-              // Получить номер ответа
-              const answerIndex = parseInt(this.getAttribute('data-answer'));
 
               // Получить текст ответа
               const answerText = this.querySelector('label').innerHTML;
               
-              // Снять выделение со всех ответов на этот вопрос
-              document.querySelectorAll(`.answer-option[data-question="${questionIndex}"]`).forEach(opt => {
-                opt.classList.remove('selected');
-                const radio = opt.querySelector('input[type="radio"]');
+              // Сама логика
+              if (this.querySelector('input').type == 'radio') {  // Радиокнопки
+                // Снять выделение
+                document.querySelectorAll(`.answer-option[data-question="${questionIndex}"]`).forEach(opt => {
+                  opt.classList.remove('selected');
+                  const radio = opt.querySelector('input[type="radio"]');
+                  if (radio) {
+                    radio.checked = false;
+                  }
+                });
+
+                // Выделить текущий ответ
+                this.classList.add('selected');
+                const radio = this.querySelector('input[type="radio"]');
                 if (radio) {
-                  radio.checked = false;
+                  radio.checked = true;
                 }
-              });
-              
-              // Выделить текущий ответ
-              this.classList.add('selected');
-              const radio = this.querySelector('input[type="radio"]');
-              if (radio) {
-                radio.checked = true;
+
+                // Сохранить ответ пользователя
+                userAnswers[questionIndex] = answerText;
+
+              } else if (this.querySelector('input').type == 'checkbox') {  // Чекбоксы
+                if (this.querySelector('input').checked == false) {
+                  // Выделить текущий ответ
+                  this.classList.add('selected');
+                  const checkbox = this.querySelector('input[type="checkbox"]');
+                  if (checkbox) {
+                    checkbox.checked = true;
+                  }
+
+                  // Сохранить ответ пользователя
+                  if (userAnswers[questionIndex] == null) {
+                    userAnswers[questionIndex] = [];
+                  }
+                  if (!userAnswers[questionIndex].includes(answerText)) {
+                    userAnswers[questionIndex].push(answerText);
+                  }
+                } else {
+                  // Снять выделение
+                  this.classList.remove('selected');
+                  const checkbox = this.querySelector('input[type="checkbox"]');
+                  if (checkbox) {
+                    checkbox.checked = false;
+                  }
+
+                  if (userAnswers[questionIndex].includes(answerText)) {
+                    userAnswers[questionIndex].splice(userAnswers[questionIndex].indexOf(answerText), 1);
+                  }
+                }
               }
-              
-              // Сохранить ответ пользователя
-              userAnswers[questionIndex] = answerText;
             }
           });
         });

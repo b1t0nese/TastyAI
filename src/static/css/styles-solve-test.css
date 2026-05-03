@@ -403,6 +403,10 @@ a {
   margin-right: 0.75rem;
 }
 
+.answer-option input[type="checkbox"] {
+  margin-right: 0.75rem;
+}
+
 /* Результаты теста */
 .result-summary {
   text-align: center;
