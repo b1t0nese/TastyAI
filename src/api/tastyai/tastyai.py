@@ -4,7 +4,7 @@ import json
 import os
 
 from ..db_manager.__all_models import *
-from deep_api import dpsk
+from .deep_api import dpsk
 
 
 api_key = os.getenv("DEEPSEEK_API_KEY")
