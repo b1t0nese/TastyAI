@@ -89,7 +89,7 @@ def end_test(attempt_id: int, answers: list, db_sess: Session, user_data: User=N
 
         if test.verdict_type=="key":
             attempt.answers, attempt.verdict = check_test_by_keys(questions, answers)
-        if test.verdict_type=="ai":
+        elif test.verdict_type=="ai":
             attempt.answers, attempt.verdict = check_test_by_ai(test.to_dict(), answers)
         else:
             raise AttemptException(f"verdict_type {test.verdict_type} is not defined")
