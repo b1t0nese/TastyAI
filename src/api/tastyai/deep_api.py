@@ -13,8 +13,7 @@ class dpsk:
 
         response = self.client.chat.completions.create(
             model="deepseek-chat" if not think else "deepseek-reasoner",
-            messages=self.messages,
-            stream=stream)
+            messages=self.messages, stream=stream)
         self.messages.append({
             "role": response.choices[0].message.role,
             "content": response.choices[0].message.content

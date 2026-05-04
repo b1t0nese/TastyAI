@@ -14,7 +14,11 @@ db_session.global_init(os.path.join(os.path.dirname(__file__), "db", "db.sqlite3
 
 
 
-def get_auth_session(requestt, db_sess):
+def get_auth_session(requestt, db_sess=None):
+    getted_db_sess = True
+    if db_sess is None:
+        db_sess = db_session.create_session()
+        getted_db_sess = False
     session_token = requestt.cookies.get("session_token")
     dnow = datetime.datetime.now()
     auth = db_sess.query(Auth).filter(Auth.session_token==session_token).first()
@@ -25,6 +29,8 @@ def get_auth_session(requestt, db_sess):
     elif auth.logout_at is not None and dnow > auth.logout_at:
         raise AuthException("The session was completed.")
     auth.last_activity = dnow
+    if not getted_db_sess:
+        db_sess.commit()
     return auth
 
 
@@ -43,10 +49,8 @@ def logout():
 
 @api_bp.route('/who_am_i')
 def who_am_i():
-    db_sess = db_session.create_session()
     try:
-        auth = get_auth_session(request, db_sess)
-        db_sess.commit()
+        auth = get_auth_session(request)
         return jsonify(auth.to_dict()), 200
     except Exception as e:
         return f"{e.__class__.__name__}: {e}", 403
@@ -129,7 +133,7 @@ def get_tests_trudb():
     if tests_count:
         query = query.limit(tests_count)
     tests = [test.to_dict(exclude=["questions", "is_private", "direction_id", "user_id"])
-              for test in query.all()]
+             for test in query.all()]
     return jsonify(tests), 200
 
 
@@ -148,17 +152,25 @@ def get_test():
     if test:
         test = test.to_dict()
         test["questions"] = json.loads(test["questions"])
-        for question in test["questions"]:
-            del question["answer"]
+        try:
+            for question in test["questions"]:
+                del question["answer"]
+        except: pass
         if start_attempt:
+            try:
+                user_data = get_auth_session(request, db_sess).user
+            except:
+                user_data = None
             attempt = Attempt()
             attempt.test_id = test["id"]
+            attempt.user_id = user_data.id if user_data else None
             db_sess.add(attempt)
             db_sess.flush()
             test["attempt"] = attempt.id
             db_sess.commit()
         return jsonify(test), 200
     else:
+        db_sess.close()
         return "Test was not found", 404
 
 
@@ -174,10 +186,15 @@ def solve_test():
     only_data = False if request.args.get('only_data') is None else True
     answers = request.get_json()
 
+    db_sess = db_session.create_session()
     try:
-        db_sess = db_session.create_session()
-        response = tastyai.end_test(attempt_id, answers, db_sess, only_data)
+        try:
+            user_data = get_auth_session(request, db_sess).user
+        except:
+            user_data = None
+        response = tastyai.end_test(attempt_id, answers, db_sess, user_data, only_data)
         db_sess.commit()
         return jsonify(response), 200
     except Exception as e:
+        db_sess.close()
         return f"{e.__class__.__name__}: {e}", 500

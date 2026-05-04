@@ -2,11 +2,11 @@ from flask import Blueprint, request, render_template, abort
 import os
 
 from .auth import RegisterForm, AuthForm
+from api.routes import get_auth_session
 
 
 web_bp = Blueprint('web', __name__, template_folder=os.path.join(
     os.path.dirname(__file__), "templates"))
-
 
 
 @web_bp.route('/auth.html')
@@ -22,8 +22,12 @@ def sign():
 @web_bp.route('/<filename>')
 def serve_html(filename):
     template_path = os.path.join(web_bp.template_folder, filename)
-    print(template_path)
     if os.path.exists(template_path) and filename.endswith('.html'):
-        return render_template(filename)
+        try:
+            user_data = get_auth_session(request)
+            username = user_data.user.name
+        except:
+            user_data, username = [], "Авторизация"
+        return render_template(filename, username=username)
     else:
         abort(404)

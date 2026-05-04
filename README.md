@@ -3,7 +3,7 @@ A website for passing and creating tests using AI.
 
 ### [ТЗ ПРОЕКТА](https://github.com/b1t0nese/TastyAI/blob/main/doc/technical-specification.md)
 ### [ПОЯСНИТЕЛЬНАЯ ЗАПИСКА](https://github.com/b1t0nese/TastyAI/blob/main/doc/project_report.md)
-### [ПРЕЗЕНТАЦИЯ](https://github.com/b1t0nese/TastyAI/blob/main/doc/tastyai_presentation.pptx)
+### [ПРЕЗЕНТАЦИЯ](https://github.com/b1t0nese/TastyAI/raw/refs/heads/main/doc/tastyai_presentation.pptx)
 
 
 ### **🧑‍💻Contributors🧑‍💻**
