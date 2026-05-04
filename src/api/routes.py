@@ -20,9 +20,9 @@ def get_auth_session(requestt, db_sess):
     auth = db_sess.query(Auth).filter(Auth.session_token==session_token).first()
     if not auth:
         raise AuthException("Auth was not found")
-    elif requestt.headers.get('User-Agent', '') == auth.user_agent:
+    elif requestt.headers.get('User-Agent', '') != auth.user_agent:
         raise AuthException("user_agent != Auth.user_agent")
-    if dnow < auth.logout_at:
+    elif auth.logout_at is not None and dnow > auth.logout_at:
         raise AuthException("The session was completed.")
     auth.last_activity = dnow
     return auth
