@@ -152,6 +152,18 @@ document.addEventListener('DOMContentLoaded', function() {
         container.insertAdjacentHTML('beforeend', resultHtml);
     }
 
+
+    function create_progressdiv(questions_num) {
+      html = '';
+      for (let i = 0; i <= questions_num; i++) {
+        html += `<div class="progress" role="progressbar" aria-valuenow="25" style="width: 100%; ${i == questions_num ? 'display: none;' : ''}">
+                  <div class="progress-bar ${i == 0 ? 'bg-warning' : 'bg-secondary'}"></div>
+                </div>`;
+      }
+      document.querySelector('.progress-stacked').innerHTML = html;
+    }
+
+
     document.querySelector('.start-test').addEventListener('click', function() {
       fetch(`api/get_test?test=${new URLSearchParams(window.location.search).get('test')}&start_attempt`, {
         method: 'GET'
@@ -160,11 +172,12 @@ document.addEventListener('DOMContentLoaded', function() {
         return response.json();
       }).then(data => {
         document.querySelector('.questions_field').innerHTML = '';  // Очищаем поле
+        create_progressdiv(data.questions.length);  // Создаем прогресбар
         createQuestions(data);  // Создаем сами вопросы
         document.querySelector('.description').innerHTML = '';  // Убираем описание
 
         const questions = document.querySelectorAll('.question-content');
-        const progressBar = document.querySelector('.progress-bar');
+        const progressBars = document.querySelectorAll('.progress-bar');
         const questionCounter = document.querySelector('.question-counter');
         const nextButtons = document.querySelectorAll('.next-question');
         const prevButtons = document.querySelectorAll('.prev-question');
@@ -176,6 +189,7 @@ document.addEventListener('DOMContentLoaded', function() {
         
         // Счетчик ответов
         let userAnswers = new Array(totalQuestions).fill(null);
+        let is_correct_answers = [];
         
         // Функция для обновления отображения вопросов
         function updateQuestion() {
@@ -198,15 +212,6 @@ document.addEventListener('DOMContentLoaded', function() {
             }
           }
           
-          // Обновление прогресс-бара
-          if (progressBar) {
-            if (!isFinished) {
-              progressBar.style.width = `${((currentQuestion + 1) / totalQuestions) * 100}%`;
-            } else {
-              progressBar.style.width = `${((currentQuestion + 1) / (totalQuestions - 1)) * 100}%`;
-            }
-          }
-          
           // Показать/скрыть кнопку "Назад"
           prevButtons.forEach(button => {
             button.style.visibility = currentQuestion === 0 ? 'hidden' : 'visible';
@@ -217,11 +222,38 @@ document.addEventListener('DOMContentLoaded', function() {
         if (questions.length > 0) {
           updateQuestion();
         }
+
+        progressBars.forEach((bar, index) => {
+          bar.addEventListener('click', function () {
+            currentQuestion = index;
+            updateQuestion();
+          })
+        });
+
         
         // Кнопки навигации
         nextButtons.forEach(button => {
           button.addEventListener('click', function() {
             if (currentQuestion < totalQuestions - 1) {
+              const bar_div = progressBars[currentQuestion];
+              const index = currentQuestion;
+              bar_div.classList.remove('bg-warning', 'bg-secondary', 'bg-success', 'bg-danger');
+              if (userAnswers[index] != null && userAnswers[index] != '' && userAnswers[index] != [] && !isFinished) {
+                bar_div.classList.add('bg-success');
+              } else if (isFinished) {
+                if (currentQuestion != progressBars.length - 1) {
+                  if (is_correct_answers[index] == true) {
+                    progressBars[currentQuestion].classList.add('bg-success');
+                  } else {
+                    progressBars[currentQuestion].classList.add('bg-danger');
+                  }
+                }
+              } else {
+                bar_div.classList.add('bg-secondary');
+              }
+              progressBars[currentQuestion + 1].classList.remove('bg-warning', 'bg-secondary', 'bg-success', 'bg-danger');
+              progressBars[currentQuestion + 1].classList.add('bg-warning');
+              
               currentQuestion++;
               updateQuestion();
             }
@@ -231,6 +263,25 @@ document.addEventListener('DOMContentLoaded', function() {
         prevButtons.forEach(button => {
           button.addEventListener('click', function() {
             if (currentQuestion > 0) {
+              const bar_div = progressBars[currentQuestion];
+              const index = currentQuestion;
+              bar_div.classList.remove('bg-warning', 'bg-secondary', 'bg-success', 'bg-danger');
+              if (userAnswers[index] != null && userAnswers[index] != '' && userAnswers[index] != [] && !isFinished) {
+                bar_div.classList.add('bg-success');
+              } else if (isFinished) {
+                if (currentQuestion != progressBars.length - 1) {
+                  if (is_correct_answers[index] == true) {
+                    progressBars[currentQuestion].classList.add('bg-success');
+                  } else {
+                    progressBars[currentQuestion].classList.add('bg-danger');
+                  }
+                }
+              } else {
+                bar_div.classList.add('bg-secondary');
+              }
+              progressBars[currentQuestion - 1].classList.remove('bg-warning', 'bg-secondary', 'bg-success', 'bg-danger');
+              progressBars[currentQuestion - 1].classList.add('bg-warning');
+              
               currentQuestion--;
               updateQuestion();
             }
@@ -263,6 +314,11 @@ document.addEventListener('DOMContentLoaded', function() {
             })
             .then(response => response.json())
             .then(answers_data => {
+              // Записываем результаты корректности в массив
+              answers_data.answers.forEach(ans => {
+                is_correct_answers.push(ans.is_correct);
+              });
+
               // Устанавливаем результыта в одноименной вкладке
               document.querySelector('.result-title').innerHTML = answers_data.verdict.split('\n')[0]
               document.querySelector('.result-description').innerHTML = answers_data.verdict.split('\n').splice(1).map(item => {
@@ -292,6 +348,18 @@ document.addEventListener('DOMContentLoaded', function() {
                   button.innerHTML = "К результатам";
                 } else {
                   button.innerHTML = "Дальше";
+                }
+              });
+              
+              // Ставим прогрессбары в соответсвии с правильностью ответов
+              progressBars.forEach((bar, index) => {
+                if (index != progressBars.length - 1) {
+                  bar.classList.remove('bg-warning', 'bg-secondary', 'bg-success', 'bg-danger');
+                  if (answers_data.answers[index].is_correct == true) {
+                    bar.classList.add('bg-success');
+                  } else {
+                    bar.classList.add('bg-danger');
+                  }
                 }
               });
             });
