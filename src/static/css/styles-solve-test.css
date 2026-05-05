@@ -176,6 +176,37 @@
   color: hsl(var(--foreground));
 }
 
+.bg-tr-05s {
+  transition: background-color 0.35s ease-out;
+}
+
+.fl-tr-05s {
+  transition: filter 0.4s ease;
+}
+
+.progress-bar:hover {
+  cursor: pointer;
+  filter: brightness(1.2);
+}
+
+.bg-thirty {
+  background-color: #beb975;
+}
+
+.bg-warning {
+  opacity: 0.75;
+}
+
+.bg-success {
+  opacity: 0.85;
+  filter: contrast(2) brightness(1.1);
+}
+
+.bg-danger {
+  opacity: 0.75;
+  filter: contrast(2);
+}
+
 /* Анимации */
 @keyframes fadeIn {
   from {

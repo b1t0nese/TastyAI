@@ -153,11 +153,12 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 
 
+    // Создает элементый прогресбара
     function create_progressdiv(questions_num) {
       html = '';
       for (let i = 0; i <= questions_num; i++) {
         html += `<div class="progress" role="progressbar" aria-valuenow="25" style="width: 100%; ${i == questions_num ? 'display: none;' : ''}">
-                  <div class="progress-bar ${i == 0 ? 'bg-warning' : 'bg-secondary'}"></div>
+                  <div class="progress-bar .fl-tr-05s bg-tr-05s ${i == 0 ? 'bg-warning' : 'bg-secondary'}" ${i < questions_num - 1 ? 'style="border-right: 0.125rem solid black;"' : ''}></div>
                 </div>`;
       }
       document.querySelector('.progress-stacked').innerHTML = html;
@@ -223,8 +224,33 @@ document.addEventListener('DOMContentLoaded', function() {
           updateQuestion();
         }
 
+        // Функция установления статуса текущего вопроса (красный, желтый, зеленый, серый, синий)
+        function set_current_statusbar_type() {
+          const bar_div = progressBars[currentQuestion];
+          const index = currentQuestion;
+          bar_div.classList.remove('bg-warning', 'bg-secondary', 'bg-success', 'bg-danger', 'bg-thirty');
+          if (userAnswers[index] != null && userAnswers[index] != '' && userAnswers[index] != [] && !isFinished) {
+            bar_div.classList.add('bg-thirty');
+          } else if (isFinished) {
+            if (currentQuestion != progressBars.length - 1) {
+              if (is_correct_answers[index] == true) {
+                progressBars[currentQuestion].classList.add('bg-success');
+              } else {
+                progressBars[currentQuestion].classList.add('bg-danger');
+              }
+            }
+          } else {
+            bar_div.classList.add('bg-secondary');
+          }
+        }
+
+        // Перемещение к вопросу при нажатии на прогресбар
         progressBars.forEach((bar, index) => {
           bar.addEventListener('click', function () {
+            set_current_statusbar_type();
+            progressBars[index].classList.remove('bg-warning', 'bg-secondary', 'bg-success', 'bg-danger', 'bg-thirty');
+            progressBars[index].classList.add('bg-warning');
+            
             currentQuestion = index;
             updateQuestion();
           })
@@ -235,23 +261,8 @@ document.addEventListener('DOMContentLoaded', function() {
         nextButtons.forEach(button => {
           button.addEventListener('click', function() {
             if (currentQuestion < totalQuestions - 1) {
-              const bar_div = progressBars[currentQuestion];
-              const index = currentQuestion;
-              bar_div.classList.remove('bg-warning', 'bg-secondary', 'bg-success', 'bg-danger');
-              if (userAnswers[index] != null && userAnswers[index] != '' && userAnswers[index] != [] && !isFinished) {
-                bar_div.classList.add('bg-success');
-              } else if (isFinished) {
-                if (currentQuestion != progressBars.length - 1) {
-                  if (is_correct_answers[index] == true) {
-                    progressBars[currentQuestion].classList.add('bg-success');
-                  } else {
-                    progressBars[currentQuestion].classList.add('bg-danger');
-                  }
-                }
-              } else {
-                bar_div.classList.add('bg-secondary');
-              }
-              progressBars[currentQuestion + 1].classList.remove('bg-warning', 'bg-secondary', 'bg-success', 'bg-danger');
+              set_current_statusbar_type();
+              progressBars[currentQuestion + 1].classList.remove('bg-warning', 'bg-secondary', 'bg-success', 'bg-danger', 'bg-thirty');
               progressBars[currentQuestion + 1].classList.add('bg-warning');
               
               currentQuestion++;
@@ -263,23 +274,8 @@ document.addEventListener('DOMContentLoaded', function() {
         prevButtons.forEach(button => {
           button.addEventListener('click', function() {
             if (currentQuestion > 0) {
-              const bar_div = progressBars[currentQuestion];
-              const index = currentQuestion;
-              bar_div.classList.remove('bg-warning', 'bg-secondary', 'bg-success', 'bg-danger');
-              if (userAnswers[index] != null && userAnswers[index] != '' && userAnswers[index] != [] && !isFinished) {
-                bar_div.classList.add('bg-success');
-              } else if (isFinished) {
-                if (currentQuestion != progressBars.length - 1) {
-                  if (is_correct_answers[index] == true) {
-                    progressBars[currentQuestion].classList.add('bg-success');
-                  } else {
-                    progressBars[currentQuestion].classList.add('bg-danger');
-                  }
-                }
-              } else {
-                bar_div.classList.add('bg-secondary');
-              }
-              progressBars[currentQuestion - 1].classList.remove('bg-warning', 'bg-secondary', 'bg-success', 'bg-danger');
+              set_current_statusbar_type();
+              progressBars[currentQuestion - 1].classList.remove('bg-warning', 'bg-secondary', 'bg-success', 'bg-danger', 'bg-thirty');
               progressBars[currentQuestion - 1].classList.add('bg-warning');
               
               currentQuestion--;
