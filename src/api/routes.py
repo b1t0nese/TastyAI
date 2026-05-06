@@ -65,7 +65,7 @@ def sign():
         if form.validate_on_submit():
             db_sess = db_session.create_session()
             user = db_sess.query(User).filter(User.name == form.name.data).first()
-            if user.check_password(form.password.data):
+            if user and user.check_password(form.password.data):
                 auth = Auth()
                 auth.user_id = user.id
                 auth.user_agent = request.headers.get('User-Agent', '')
