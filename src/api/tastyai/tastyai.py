@@ -1,5 +1,6 @@
 from sqlalchemy.orm import Session
 from dotenv import load_dotenv
+from json_repair import repair_json
 import datetime
 import json
 import os
@@ -58,15 +59,11 @@ def check_test_by_keys(questions: list, answers: list):
 
 
 def check_test_by_ai(test: dict, user_answers: list):
-    try:
-        our_ai = dpsk(os.getenv("DEEPSEEK_API_KEY"), prompt=dpsk_prompt)
-        ai_request = json.dumps({"test": test, "user_answers": user_answers})
-        ai_response = our_ai.chat(ai_request)
-        ai_response = json.loads(ai_response)
-        return json.dumps(ai_response["answers"]), ai_response["verdict"]
-    except Exception as e:
-        print(ai_response)
-        raise e
+    our_ai = dpsk(os.getenv("DEEPSEEK_API_KEY"), prompt=dpsk_prompt)
+    ai_request = json.dumps({"test": test, "user_answers": user_answers})
+    ai_response = our_ai.chat(ai_request)
+    ai_response = json.loads(repair_json(ai_response))
+    return json.dumps(ai_response["answers"]), ai_response["verdict"]
 
 
 

@@ -3,3 +3,4 @@ SQLAlchemy
 python-dotenv
 flask-wtf
 openai
+json-repair
