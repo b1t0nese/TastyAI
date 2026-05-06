@@ -115,14 +115,14 @@ document.addEventListener('DOMContentLoaded', function() {
               </div>
             </div>
             
-            <div class="p-6 flex justify-between test-explanatory-div">
-                <button class="border border-input hover:bg-muted text-foreground btn btn-outline prev-question bg-background" ${showPrevButton ? 'style="visibility: hidden"' : ''}" data-question-index="${index}">
+            <div class="p-6 flex justify-between bg-tr-05s test-explanatory-div">
+                <button class="border border-input hover:bg-muted text-foreground btn btn-outline h-fit-content prev-question bg-background" ${showPrevButton ? 'style="visibility: hidden"' : ''}" data-question-index="${index}">
                 Назад
               </button>
               
-              <p class="text-lg md:text-xl text-muted-foreground test-explanatory-text px-3 text-white"></p>
+              <p class="text-lg md:text-xl text-muted-foreground test-explanatory-text px-3 align-content-center mb-0 text-align-justify text-white"></p>
               
-              <button class="bg-tasty hover:bg-tasty-dark text-white btn btn-primary next-question" data-question-index="${index}">
+              <button class="bg-tasty hover:bg-tasty-dark text-white btn btn-primary h-fit-content next-question" data-question-index="${index}">
                 ${nextButtonText}
               </button>
             </div>
@@ -135,8 +135,13 @@ document.addEventListener('DOMContentLoaded', function() {
       resultHtml = `
           <div class="question-content" style="display: none">
             <div class="p-6 border-b">
-              <h2 class="text-xl font-medium mb-4 result-title"></h2>
+              <h2 class="text-xl font-medium mb-4 result-title">Проверяем тест...</h2>
               <p class="text-gray-600 mb-4 result-description"></p>
+              <div class="d-flex justify-content-center response_wait-spinner"> 
+                <div class="spinner-border text-warning w-16 h-16" role="status"">
+                  <span class="visually-hidden">Loading...</span>
+                </div> 
+              </div>
             </div>
             <div class="p-6 flex justify-between">
               <button class="border border-input hover:bg-muted text-foreground btn btn-outline prev-question bg-background">
@@ -166,13 +171,24 @@ document.addEventListener('DOMContentLoaded', function() {
 
 
     document.querySelector('.start-test').addEventListener('click', function() {
+      document.querySelector('.questions_field').innerHTML = `<div class="p-6 border-b">
+                                                                <h2 class="text-xl font-medium mb-4 result-title">Получаем данные теста...</h2>
+                                                                <p class="text-gray-600 mb-4 result-description"></p>
+                                                                <div class="d-flex justify-content-center response_wait-spinner"> 
+                                                                  <div class="spinner-border text-warning w-16 h-16" role="status"">
+                                                                    <span class="visually-hidden">Loading...</span>
+                                                                  </div> 
+                                                                </div>
+                                                              </div>`;  
+
       fetch(`api/get_test?test=${new URLSearchParams(window.location.search).get('test')}&start_attempt`, {
         method: 'GET'
       })
       .then(response => {
         return response.json();
       }).then(data => {
-        document.querySelector('.questions_field').innerHTML = '';  // Очищаем поле
+        setTimeout(() => {
+        document.querySelector('.questions_field').innerHTML = '';  // Очищаем
         create_progressdiv(data.questions.length);  // Создаем прогресбар
         createQuestions(data);  // Создаем сами вопросы
         document.querySelector('.description').innerHTML = '';  // Убираем описание
@@ -209,7 +225,11 @@ document.addEventListener('DOMContentLoaded', function() {
             if (!isFinished) {
               questionCounter.textContent = `${currentQuestion + 1}/${totalQuestions}`;
             } else {
-              questionCounter.textContent = `${currentQuestion + 1}/${totalQuestions - 1}`;
+              if (currentQuestion + 1 <= totalQuestions - 1) {
+                questionCounter.textContent = `${currentQuestion + 1}/${totalQuestions - 1}`;
+              } else {
+                questionCounter.textContent = `${totalQuestions - 1}/${totalQuestions - 1}`;
+              }
             }
           }
           
@@ -235,6 +255,12 @@ document.addEventListener('DOMContentLoaded', function() {
             if (currentQuestion != progressBars.length - 1) {
               if (is_correct_answers[index] == true) {
                 progressBars[currentQuestion].classList.add('bg-success');
+              } else if (is_correct_answers.length == 0) {
+                if (userAnswers[index] != null && userAnswers[index] != '' && userAnswers[index] != []) {
+                  bar_div.classList.add('bg-thirty');
+                } else {
+                  bar_div.classList.add('bg-secondary');
+                }
               } else {
                 progressBars[currentQuestion].classList.add('bg-danger');
               }
@@ -267,6 +293,8 @@ document.addEventListener('DOMContentLoaded', function() {
               
               currentQuestion++;
               updateQuestion();
+            } else {
+              set_current_statusbar_type();
             }
           });
         });
@@ -285,9 +313,7 @@ document.addEventListener('DOMContentLoaded', function() {
         });
 
         // Кнопка для возвращения с блока результатов
-        prevButtons[prevButtons.length - 1].addEventListener('click', function() {
-          document.querySelector('.progressdiv').style.display = 'block';  // Показываем полоску с результатами
-        });
+        prevButtons[prevButtons.length - 1].addEventListener('click', function() { });
 
         // Кнопка "Завершить"
         nextButtons[nextButtons.length - 2].addEventListener('click', function() {
@@ -296,7 +322,7 @@ document.addEventListener('DOMContentLoaded', function() {
             totalQuestions += 1;
             currentQuestion++;
             updateQuestion();
-            userAnswers.forEach((item, index) => { if (item === null) { userAnswers[index] = ""; } });  // Преобразуем пустые ответы в пустоту другого типа
+            userAnswers.forEach((item, index) => { if (item === null) { userAnswers[index] = ""; } });  // Преобразуем пустые ответы в пустоту строкового типа
             answerOptions.forEach(option => { option.querySelector('input').disabled = true; });  // Отключаем все радиокнопки
             textWrites.forEach(option => { option.disabled = true; });
 
@@ -310,22 +336,26 @@ document.addEventListener('DOMContentLoaded', function() {
             })
             .then(response => response.json())
             .then(answers_data => {
+              setTimeout(() => {  // Чут чут задержка для пафоса !!!! ПОТОМ УБРАТЬ !!!!
               // Записываем результаты корректности в массив
               answers_data.answers.forEach(ans => {
                 is_correct_answers.push(ans.is_correct);
               });
 
-              // Устанавливаем результыта в одноименной вкладке
+              // Удаляем мпинер загрузки
+              document.querySelector('.response_wait-spinner').remove();
+
+              // Устанавливаем результыта во вкладке результатов
               document.querySelector('.result-title').innerHTML = answers_data.verdict.split('\n')[0]
               document.querySelector('.result-description').innerHTML = answers_data.verdict.split('\n').splice(1).map(item => {
-                const [question, answer] = item.split(': ');
-                const color = answer === 'правильно' ? 'green' : 'red';
-                return `${question}: <text style='color: ${color}'>${answer}</text>`;
+                return item;
               }).join('<br>') + '<br>';
               
               // Меняем элементы под ответ
               document.querySelectorAll('.test-explanatory-text').forEach((text, index) => {
-                text.innerHTML = answers_data.answers[index].description;
+                if (answers_data.answers[index].description != undefined) {
+                  text.innerHTML = answers_data.answers[index].description;
+                }
               });
 
               document.querySelectorAll('.test-explanatory-div').forEach((div, index) => {
@@ -358,9 +388,11 @@ document.addEventListener('DOMContentLoaded', function() {
                   }
                 }
               });
+              progressBars[currentQuestion].classList.remove('bg-warning', 'bg-secondary', 'bg-success', 'bg-danger', 'bg-thirty');
+              progressBars[currentQuestion].classList.add('bg-warning');
+              }, 500);
             });
           }
-          document.querySelector('.progressdiv').style.display = 'none';  // Скрываем полоску с результатами
         });
         
         // ДАЛЬШЕ МЕХАНИКИ ВОПРОСОВ
@@ -442,6 +474,7 @@ document.addEventListener('DOMContentLoaded', function() {
             userAnswers[questionIndex] = e.target.value;
           });
         });
+        }, 500);
       });
     });
   });

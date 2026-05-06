@@ -12,4 +12,4 @@ app.register_blueprint(api.api_bp)
 
 
 if __name__ == "__main__":
-    app.run(threaded=True, port=8999)
+    app.run(threaded=True, port=8080)

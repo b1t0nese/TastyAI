@@ -127,6 +127,10 @@ a {
   height: 4rem;
 }
 
+.w-16 {
+  width: 4rem;
+}
+
 .items-center {
   align-items: center;
 }
@@ -282,8 +286,8 @@ a {
   width: 100%;
 }
 
-.ml-2 {
-  margin-left: 0.5rem;
+.h-fit-content {
+  height: fit-content;
 }
 
 .hover\:bg-tasty:hover {
@@ -296,6 +300,10 @@ a {
 
 .mobile-menu {
   display: none;
+}
+
+.text-align-justify {
+  text-align: justify;
 }
 
 .p-4 {
@@ -400,6 +408,10 @@ a {
 
 .mt-8 {
   margin-top: 2rem;
+}
+
+.ml-2 {
+  margin-left: 0.5rem;
 }
 
 .mx-auto {
