@@ -115,7 +115,7 @@ document.addEventListener('DOMContentLoaded', function() {
               </div>
             </div>
             
-            <div class="p-6 flex justify-between bg-tr-05s test-explanatory-div">
+            <div class="p-6 flex justify-between bg-tr-05s align-items-center test-explanatory-div">
                 <button class="border border-input hover:bg-muted text-foreground btn btn-outline h-fit-content prev-question bg-background" ${showPrevButton ? 'style="visibility: hidden"' : ''}" data-question-index="${index}">
                 Назад
               </button>
