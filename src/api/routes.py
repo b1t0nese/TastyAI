@@ -25,6 +25,7 @@ def get_auth_session(requestt, db_sess=None):
     if not auth:
         raise AuthException("Auth was not found")
     elif requestt.headers.get('User-Agent', '') != auth.user_agent:
+        print(requestt.headers.get('User-Agent', ''))
         raise AuthException("user_agent != Auth.user_agent")
     elif auth.logout_at is not None and dnow > auth.logout_at:
         raise AuthException("The session was completed.")
@@ -198,3 +199,24 @@ def solve_test():
     except Exception as e:
         db_sess.close()
         return f"{e.__class__.__name__}: {e}", 500
+
+
+@api_bp.route("/save_test", methods=["POST"])
+def create_test():
+    """## api/save_test
+### Сохранение данных нового теста.
+#### Данные:
+    тест json с полными данными.
+#### Условия:
+    запрос должен быть с cookie действительной сессии."""
+    test_data = request.get_json()
+
+    db_sess = db_session.create_session()
+    try:
+        user_data = get_auth_session(request, db_sess).user
+        response = tastyai.save_test(test_data, user_data, db_sess)
+        db_sess.commit()
+        return jsonify(response), 200
+    except Exception as e:
+        db_sess.close()
+        return f"{e.__class__.__name__}: {e}", 403

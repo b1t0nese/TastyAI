@@ -94,3 +94,29 @@ def end_test(attempt_id: int, answers: list, db_sess: Session, user_data: User=N
     result = attempt.to_dict(["test", "user_id"])
     result["answers"] = json.loads(result["answers"])
     return result
+
+
+
+def save_test(test_data: dict, user: User, db_sess: Session):
+    if not all([key in test_data.keys() for key in ["name", "questions"]]):
+        raise TestException('Where "name" or "questions"?')
+    elif not test_data["questions"]:
+        raise TestException('"questions" cant be zero')
+    test = Test()
+    test.image = test_data.get("image", "static/images/hero-image.svg")
+    test.name = test_data["name"]
+    test.description = test_data.get("description")
+    test.is_private = test_data.get("is_private", False)
+    test.questions = json.dumps(test_data["questions"])
+    test.verdict_type = test_data.get("verdict_type", "key")
+    test.prompt = test_data.get("prompt")
+    direction = db_sess.query(Direction).filter(Direction.direction == test_data.get("direction")).first()
+    if not direction:
+        direction = Direction(direction=test_data.get("direction"))
+        db_sess.add(direction)
+        db_sess.flush()
+    test.direction = direction
+    test.user = user
+    db_sess.add(test)
+    db_sess.flush()
+    return test.to_dict()

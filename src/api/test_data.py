@@ -11,7 +11,6 @@ with open(os.path.join(DB_PATH, "test_data(tests).json"), 'r', encoding='utf-8')
 db_sess = db_session.create_session()
 for test_data in data:
     test = Test()
-    test.id = test_data["id"]
     test.image = test_data["image"]
     test.name = test_data["name"]
     test.description = test_data["description"]
