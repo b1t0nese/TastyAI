@@ -104,6 +104,17 @@ a {
   background-color: rgba(219, 158, 54, 0.1);
 }
 
+.btn-danger {
+  background-color: rgb(247, 84, 84);
+  color: white;
+  border: 1px solid rgb(247, 84, 84);
+}
+
+.btn-danger:hover {
+  background-color: rgb(247, 115, 115);
+  border-color: rgb(247, 115, 115);
+}
+
 /* Хедер */
 .header {
   position: sticky;

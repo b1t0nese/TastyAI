@@ -73,44 +73,27 @@
                       ></textarea>
                     </div>
                     
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                      <div>
-                        <label for="test-category" class="block text-sm font-medium mb-1">
-                          Категория
-                        </label>
-                        <select
-                          id="test-category"
-                          class="w-full rounded-md border border-input bg-background px-3 py-2 text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
-                        >
-                          <option value="" disabled selected>Выберите категорию</option>
-                          <option value="science">Наука</option>
-                          <option value="history">История</option>
-                          <option value="art">Искусство</option>
-                          <option value="tech">Технологии</option>
-                          <option value="fun">Развлечения</option>
-                        </select>
-                      </div>
-                      
-                      <div>
-                        <label for="test-questions" class="block text-sm font-medium mb-1">
-                          Количество вопросов
-                        </label>
-                        <select
-                          id="test-questions"
-                          class="w-full rounded-md border border-input bg-background px-3 py-2 text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
-                        >
-                          <option value="5">5 вопросов</option>
-                          <option value="10" selected>10 вопросов</option>
-                          <option value="15">15 вопросов</option>
-                          <option value="20">20 вопросов</option>
-                        </select>
-                      </div>
+                    <div>
+                      <label for="test-category" class="block text-sm font-medium mb-1">
+                        Категория
+                      </label>
+                      <select
+                        id="test-category"
+                        class="w-full rounded-md border border-input bg-background px-3 py-2 text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+                      >
+                        <option value="" disabled selected>Выберите категорию</option>
+                        <option value="science">Наука</option>
+                        <option value="history">История</option>
+                        <option value="art">Искусство</option>
+                        <option value="tech">Технологии</option>
+                        <option value="fun">Развлечения</option>
+                      </select>
                     </div>
                     
                     <!-- Переключатель для использования ИИ -->
                     <div class="switch-container">
                       <label class="switch">
-                        <input type="checkbox" id="use-ai" checked>
+                        <input type="checkbox" id="use-ai">
                         <span class="slider"></span>
                       </label>
                       <span>Использовать ИИ для генерации вопросов</span>
@@ -159,10 +142,31 @@
                     <p class="text-muted-foreground mb-6">
                       Создайте вопросы для теста вручную, заполнив форму ниже.
                     </p>
+
+                    <div class="line mt-4 mb-2"></div>
+
+                    <questions></questions>
                     
-                    <div class="mb-4">
+                    <!--<div class="mb-4 question-card">
                       <h3 class="font-medium mb-2">Вопрос 1</h3>
                       <div class="space-y-3 border rounded-md p-4">
+                        <div>
+                          <label for="question-type" class="block text-sm font-medium mb-1">
+                            Категория
+                          </label>
+                          <select
+                            id="question-type"
+                            class="w-full rounded-md border border-input bg-background px-3 py-2 text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+                          >
+                            <option value="" disabled selected>Выберите тип вопроса</option>
+                            <option value="choice">Выбор варианта ответа</option>
+                            <option value="many_choice">Выбор нескольких вариантов ответа</option>
+                            <option value="text">Поле с вводом</option>
+                          </select>
+                        </div>
+
+                        <div class="line mt-4 mb-2"></div>
+
                         <div>
                           <label class="block text-sm font-medium mb-1">Текст вопроса</label>
                           <input
@@ -173,9 +177,9 @@
                         </div>
                         
                         <div>
-                          <label class="block text-sm font-medium mb-1">Варианты ответов</label>
+                          <label class="block text-sm font-medium mt-4 mb-2">Варианты ответов</label>
                           <div class="space-y-2">
-                            <div class="flex items-center gap-2">
+                            <div class="flex items-center gap-2 mb-2">
                               <input type="radio" name="correct-1" checked />
                               <input
                                 type="text"
@@ -183,7 +187,7 @@
                                 placeholder="Вариант ответа 1"
                               />
                             </div>
-                            <div class="flex items-center gap-2">
+                            <div class="flex items-center gap-2 mb-2">
                               <input type="radio" name="correct-1" />
                               <input
                                 type="text"
@@ -191,7 +195,7 @@
                                 placeholder="Вариант ответа 2"
                               />
                             </div>
-                            <div class="flex items-center gap-2">
+                            <div class="flex items-center gap-2 mb-2">
                               <input type="radio" name="correct-1" />
                               <input
                                 type="text"
@@ -199,7 +203,7 @@
                                 placeholder="Вариант ответа 3"
                               />
                             </div>
-                            <div class="flex items-center gap-2">
+                            <div class="flex items-center gap-2 mb-2">
                               <input type="radio" name="correct-1" />
                               <input
                                 type="text"
@@ -210,7 +214,7 @@
                           </div>
                         </div>
                       </div>
-                    </div>
+                    </div>-->
                     
                     <div class="flex justify-center mt-4">
                       <button class="border border-input hover:bg-muted text-foreground btn btn-outline add-question-button">
