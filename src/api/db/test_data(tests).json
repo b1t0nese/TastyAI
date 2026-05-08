@@ -1,6 +1,5 @@
 [
   {
-    "id": "1",
     "image": "static/images/math.jpg",
     "name": "Основы математического анализа",
     "description": "Проверьте свои знания в области производных, интегралов и пределов. Тест подходит для студентов 1-2 курса.",
@@ -43,7 +42,6 @@
     ]
   },
   {
-    "id": "2",
     "image": "static/images/history.jpg",
     "name": "Великая Отечественная война",
     "description": "Ключевые события, даты и личности Великой Отечественной войны 1941-1945 годов.",
@@ -82,7 +80,6 @@
     ]
   },
   {
-    "id": "3",
     "image": "static/images/literature.jpg",
     "name": "Русская литература XIX века",
     "description": "Золотой век русской литературы: Пушкин, Лермонтов, Гоголь, Достоевский и другие классики.",
@@ -120,7 +117,6 @@
     ]
   },
   {
-    "id": "4",
     "image": "static/images/physics.jpg",
     "name": "Законы механики Ньютона",
     "description": "Базовые законы классической механики, силы, движение и взаимодействие тел.",
@@ -157,7 +153,6 @@
     ]
   },
   {
-    "id": "5",
     "image": "static/images/chemistry.jpg",
     "name": "Периодическая система элементов",
     "description": "Химические элементы, их свойства и закономерности в таблице Менделеева.",
@@ -195,7 +190,6 @@
     ]
   },
   {
-    "id": "6",
     "image": "static/images/informatics.jpg",
     "name": "Язык программирования Python",
     "description": "Базовые концепции Python: типы данных, циклы, функции и ООП.",
@@ -235,7 +229,6 @@
     ]
   },
   {
-    "id": "7",
     "image": "static/images/english.jpg",
     "name": "English Grammar: Tenses",
     "description": "Test your knowledge of English tenses: Present Simple, Past Simple, Present Perfect and more.",
@@ -273,7 +266,6 @@
     ]
   },
   {
-    "id": "8",
     "image": "static/images/mood.jpg",
     "name": "Твой уровень энергии и настроения",
     "description": "Этот тест поможет оценить твоё эмоциональное состояние за последнюю неделю. Отвечай честно, основываясь на своих ощущениях.",

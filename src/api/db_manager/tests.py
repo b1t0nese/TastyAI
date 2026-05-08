@@ -20,7 +20,7 @@ class AttemptException(Exception):
 class Test(SqlAlchemyBase, JsonSerializableMixin):
     __tablename__ = 'tests'
 
-    id = sqlalchemy.Column(sqlalchemy.Integer, primary_key=True, autoincrement=True)
+    id = sqlalchemy.Column(sqlalchemy.String, primary_key=True, default=lambda: str(uuid.uuid4()))
     image = sqlalchemy.Column(sqlalchemy.String, nullable=True)
     name = sqlalchemy.Column(sqlalchemy.String(collation='NOCASE'))
     description = sqlalchemy.Column(sqlalchemy.String(collation='NOCASE'), nullable=True)
