@@ -145,7 +145,7 @@ def get_test():
 #### Параметры:
 1. test -id теста, обязательный параметр
 2. start_attempt -запустить прохождение, с этим получить attempt_id"""
-    test_id = request.args.get('test', type=int)
+    test_id = request.args.get('test', type=str)
     start_attempt = False if request.args.get('start_attempt') is None else True
 
     db_sess = db_session.create_session()
