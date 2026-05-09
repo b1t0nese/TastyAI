@@ -32,7 +32,7 @@ document.addEventListener('DOMContentLoaded', function() {
   
   // Код страницы
   const questions_cards = []
-  const questions_div = document.getElementById('manual-mode').querySelector('questions');
+  const questions_div = document.querySelector('questions');
 
   function create_empty_question() {
     // Создаем элемент и впрыскиваем в него html код
@@ -41,7 +41,7 @@ document.addEventListener('DOMContentLoaded', function() {
     div.style.animation = "quesionAppearance 0.5s";
 
     div.insertAdjacentHTML('afterbegin', `
-    <h3 class="font-medium mb-2">Вопрос ${questions_cards.length + 1}</h3>
+    <h3 class="font-medium mb-2 fs-2">Вопрос ${questions_cards.length + 1}</h3>
     <div class="space-y-3 border rounded-md p-4">
       <div>
         <label for="question-type" class="block fs-5 text-sm font-medium mb-1">
@@ -87,15 +87,27 @@ document.addEventListener('DOMContentLoaded', function() {
 
 
   function set_question_type(div, type) {
-    const ai_elements_html = `
-      <div class="mb-2 switch-container">
-        <label class="switch">
-          <input type="checkbox" id="use-ai-question-check">
-          <span class="slider"></span>
-        </label>
-        <span>Использовать ИИ для проверки вопросов.</span>
+    const question_name_description_html = `
+      <div class="line mt-4 mb-2"></div>
+      <div>
+        <label class="ml-2 mt-2 block fs-5 font-medium mb-1">Название вопроса</label>
+        <input
+          id="question-name"
+          type="text"
+          class="w-full rounded-md border border-input bg-background px-3 py-2 fs-6"
+          placeholder="Введите название вопроса"
+        />
       </div>
-      <textarea rows="4" class="d-none w-full rounded-md border border-input bg-background px-3 py-2 text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring" placeholder="Напишите промпт для ИИ проверки. Например: ''Определи текущее эмоциональное состояние человека.''" style="height: 114px;"></textarea>
+
+      <div>
+        <label class="ml-2 mt-4 block fs-5 font-medium mb-1">Текст вопроса</label>
+        <input
+          id="question-description"
+          type="text"
+          class="w-full rounded-md border border-input bg-background px-3 py-2 fs-6"
+          placeholder="Введите вопрос"
+        />
+      </div>
     `;
 
     // Очищаем от предыдущего тип вопроса
@@ -105,32 +117,15 @@ document.addEventListener('DOMContentLoaded', function() {
     
 
     // Типы
-    if (type == 'choice') {
+    if (type == 'choice' || type == 'many_choice') {
       div.querySelector('question').innerHTML = `
-        <div class="line mt-4 mb-2"></div>
-        <div>
-          <label class="ml-2 mt-2 block fs-5 font-medium mb-1">Название вопроса</label>
-          <input
-            type="text"
-            class="w-full rounded-md border border-input bg-background px-3 py-2 fs-6"
-            placeholder="Введите название вопроса"
-          />
-        </div>
-
-        <div>
-          <label class="ml-2 mt-4 block fs-5 font-medium mb-1">Текст вопроса</label>
-          <input
-            type="text"
-            class="w-full rounded-md border border-input bg-background px-3 py-2 fs-6"
-            placeholder="Введите вопрос"
-          />
-        </div>
+        ${question_name_description_html}
 
         <div class='answer-div'>
           <label class="ml-2 block fs-5 font-medium mt-4 mb-2">Варианты ответов</label>
           <div class="space-y-2">
             <div class="flex items-center gap-2 mb-2">
-              <input type="radio" name="correct-1" checked />
+              <input type="${type == 'choice' ? 'radio' : 'checkbox'}" name="correct-1" checked />
               <input
                 type="text"
                 class="w-full rounded-md border border-input bg-background px-3 py-2 text-sm"
@@ -138,7 +133,7 @@ document.addEventListener('DOMContentLoaded', function() {
               />
             </div>
             <div class="flex items-center gap-2 mb-2">
-              <input type="radio" name="correct-1" />
+              <input type="${type == 'choice' ? 'radio' : 'checkbox'}" name="correct-1" />
               <input
                 type="text"
                 class="w-full rounded-md border border-input bg-background px-3 py-2 text-sm"
@@ -146,7 +141,7 @@ document.addEventListener('DOMContentLoaded', function() {
               />
             </div>
             <div class="flex items-center gap-2 mb-2">
-              <input type="radio" name="correct-1" />
+              <input type="${type == 'choice' ? 'radio' : 'checkbox'}" name="correct-1" />
               <input
                 type="text"
                 class="w-full rounded-md border border-input bg-background px-3 py-2 text-sm"
@@ -154,7 +149,7 @@ document.addEventListener('DOMContentLoaded', function() {
               />
             </div>
             <div class="flex items-center gap-2 mb-2">
-              <input type="radio" name="correct-1" />
+              <input type="${type == 'choice' ? 'radio' : 'checkbox'}" name="correct-1" />
               <input
                 type="text"
                 class="w-full rounded-md border border-input bg-background px-3 py-2 text-sm"
@@ -163,60 +158,30 @@ document.addEventListener('DOMContentLoaded', function() {
             </div>
           </div>
         </div>
-
-        ${ai_elements_html}
       `;
 
-      div.querySelector('#use-ai-question-check').addEventListener('change', function() {
-        if (this.checked) {
-          div.querySelector('question').querySelector('textarea').classList.remove('d-none');  
-          div.querySelector('question').querySelector('.answer-div').querySelector('div').querySelectorAll('div').forEach(radio => {
-            radio.querySelector('input[type="radio"]').classList.add('d-none');
-          });
-        } else {
-          div.querySelector('question').querySelector('textarea').classList.add('d-none');
-          div.querySelector('question').querySelector('.answer-div').querySelector('div').querySelectorAll('div').forEach(radio => {
-            radio.querySelector('input[type="radio"]').classList.remove('d-none');
-          });
-        }
-      });
-    } else if (type == 'many_choice') {
+    } else if (type == 'text') {
+      div.querySelector('question').innerHTML = `
+        ${question_name_description_html}
 
+        <div class='answer-div'>
+          <label class="ml-2 block fs-5 font-medium mt-4 mb-2">Введите правильный ответ</label>
+          <div class="flex items-center gap-2 mb-2">
+            <input
+              type="text"
+              class="w-full rounded-md border border-input bg-background px-3 py-2 text-sm"
+              placeholder="Ответ"
+            />
+          </div>
+          </div>
+        </div>
+      `;
     }
   }
 
 
   create_empty_question();
   
-  
-  // Система табов
-  const tabs = document.querySelectorAll('.edit-tab');
-  const tabContents = document.querySelectorAll('.tab-content');
-  
-  tabs.forEach(tab => {
-    tab.addEventListener('click', function() {
-      const tabId = this.getAttribute('data-tab');
-      
-      // Удалить класс active со всех табов
-      tabs.forEach(t => t.classList.remove('active'));
-      
-      // Добавить класс active на выбранный таб
-      this.classList.add('active');
-      
-      // Скрыть все содержимое табов
-      tabContents.forEach(content => {
-        content.classList.remove('active');
-        content.style.display = 'none';
-      });
-      
-      // Показать выбранное содержимое
-      const selectedContent = document.getElementById(`${tabId}-tab`);
-      if (selectedContent) {
-        selectedContent.classList.add('active');
-        selectedContent.style.display = 'block';
-      }
-    });
-  });
   
   // Система шагов
   const steps = document.querySelectorAll('.step');
@@ -271,88 +236,98 @@ document.addEventListener('DOMContentLoaded', function() {
       }
     });
   });
-  
-  // Переключатель использования ИИ
-  const useAiCheckbox = document.getElementById('use-ai');
-  const aiMode = document.getElementById('ai-mode');
-  const manualMode = document.getElementById('manual-mode');
-  
-  if (useAiCheckbox && aiMode && manualMode) {
-    useAiCheckbox.addEventListener('change', function() {
-      if (this.checked) {
-        aiMode.style.display = 'block';
-        manualMode.style.display = 'none';
+
+  // Завершения создания теста
+  document.querySelector('.step-create-test').addEventListener('click', function() {
+    if (currentStep < steps.length - 1) {
+      currentStep++;
+      updateSteps();
+
+      // Создаем JSON (no plsss......)
+      const test_data = {}
+      test_data.name = document.getElementById('test-title').value;
+      test_data.description = document.getElementById('test-description').value;
+      test_data.direction = document.getElementById('test-category').value;
+      test_data.verdict_type = document.getElementById('test-category').value;
+
+      if (document.querySelector('input[id="use-ai-check-questions"]').checked) {
+        test_data.verdict_type = 'ai';
+        test_data.prompt = document.querySelector('textarea[id="use-ai-check-questions"]').value;
       } else {
-        aiMode.style.display = 'none';
-        manualMode.style.display = 'block';
+        test_data.verdict_type = 'key';
+        test_data.prompt = "";
       }
-    });
-  }
-  
-  // Кнопка генерации теста
-  const generateButton = document.getElementById('generate-test');
-  if (generateButton) {
-    generateButton.addEventListener('click', function() {
-      // Имитация загрузки
-      this.disabled = true;
-      this.innerHTML = '<span class="loading-icon">⏳</span> Генерация...';
-      
-      // Имитация задержки
-      setTimeout(() => {
-        currentStep++;
-        updateSteps();
-        this.disabled = false;
-        this.innerHTML = 'Сгенерировать вопросы';
-      }, 2000);
-    });
-  }
-  
-  // Редактирование теста
-  const editTestSelect = document.getElementById('edit-test-select');
-  const editTestForm = document.getElementById('edit-test-form');
-  
-  if (editTestSelect && editTestForm) {
-    editTestSelect.addEventListener('change', function() {
-      if (this.value) {
-        editTestForm.style.display = 'block';
-      } else {
-        editTestForm.style.display = 'none';
-      }
-    });
-  }
-  
-  // Кнопка сохранения изменений теста
-  const saveEditButton = document.getElementById('save-edit-button');
-  if (saveEditButton) {
-    saveEditButton.addEventListener('click', function() {
-      alert('Изменения сохранены!');
-    });
-  }
-  
-  // Обработка кнопок редактирования вопросов
-  const editQuestionButtons = document.querySelectorAll('.edit-question-button');
-  editQuestionButtons.forEach(button => {
-    button.addEventListener('click', function(e) {
-      e.preventDefault();
-      const questionId = this.getAttribute('data-question');
-      // Здесь будет код для открытия формы редактирования вопроса
-      alert(`Редактирование вопроса ${questionId}`);
-    });
+
+      test_data.questions = [];
+
+      questions_cards.forEach(card => {
+        // Название, описание, тип каждого вопроса
+        test_data.questions.push({});
+        test_data.questions.at(-1).name = card.querySelector('question').querySelector('#question-name').value;
+        test_data.questions.at(-1).description = card.querySelector('question').querySelector('#question-description').value;
+        test_data.questions.at(-1).type = card.querySelector('#question-type').value;
+
+        const type = test_data.questions.at(-1).type;
+
+
+        // Ситуативно для кадого типа
+        if (type == 'choice' || type == 'many_choice') {
+          test_data.questions.at(-1).answers = []
+
+          // Проходимся по всем полям ответьа и записываем результы
+          const answers_inputs = card.querySelector('.answer-div').querySelectorAll('input[type="text"]');
+          answers_inputs.forEach(ans => {
+            test_data.questions.at(-1).answers.push(ans.value);
+          });
+
+          // Ставим правильный вариант
+          if (type == 'choice') {
+            card.querySelector('question').querySelector('.answer-div').querySelectorAll('div').forEach(ans_div => {
+              if (ans_div.querySelector('input[type="radio"]') && ans_div.querySelector('input[type="radio"]').checked) {
+                test_data.questions.at(-1).answer = ans_div.querySelector('input[type="text"]').value;
+              }
+            });
+          } else if (type == 'many_choice') {
+            test_data.questions.at(-1).answer = [];
+            card.querySelector('question').querySelector('.answer-div').querySelectorAll('div').forEach(ans_div => {
+              if (ans_div.querySelector('input[type="checkbox"]') && ans_div.querySelector('input[type="checkbox"]').checked) {
+                test_data.questions.at(-1).answer.push(ans_div.querySelector('input[type="text"]').value);
+              }
+            });
+          }
+        } else if (type == 'text') {
+          test_data.questions.at(-1).answer = card.querySelector('question').querySelector('.answer-div').querySelector('input').value;
+        }
+      });
+
+
+      console.log(test_data);
+    }
   });
   
-  // Обработка кнопок удаления вопросов
-  const deleteQuestionButtons = document.querySelectorAll('.delete-question-button');
-  deleteQuestionButtons.forEach(button => {
-    button.addEventListener('click', function(e) {
-      e.preventDefault();
-      const questionId = this.getAttribute('data-question');
-      if (confirm(`Вы уверены, что хотите удалить вопрос ${questionId}?`)) {
-        // Здесь будет код для удаления вопроса
-        alert(`Вопрос ${questionId} удален`);
-      }
-    });
+  // Работа тумблеров ИИ
+  const use_ai_generate_questions_textarea = document.querySelector('textarea[id="use-ai-generate-questions"]');
+  const use_ai_check_questions_textarea = document.querySelector('textarea[id="use-ai-check-questions"]');
+
+  const use_ai_generate_questions_switch = document.querySelector('input[id="use-ai-generate-questions"]');
+  const use_ai_check_questions_switch = document.querySelector('input[id="use-ai-check-questions"]');
+
+  use_ai_generate_questions_switch.addEventListener('change', function () {
+    if (!this.checked) {
+      use_ai_generate_questions_textarea.classList.add('d-none');
+    } else {
+      use_ai_generate_questions_textarea.classList.remove('d-none');
+    }
   });
-  
+
+  use_ai_check_questions_switch.addEventListener('change', function () {
+    if (!this.checked) {
+      use_ai_check_questions_textarea.classList.add('d-none');
+    } else {
+      use_ai_check_questions_textarea.classList.remove('d-none');
+    }
+  });
+
   // Кнопка добавления нового вопроса вручную
   const addQuestionButton = document.querySelector('.add-question-button');
   if (addQuestionButton) {
