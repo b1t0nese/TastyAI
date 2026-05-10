@@ -58,7 +58,11 @@ document.addEventListener('DOMContentLoaded', function() {
         </select>
         <div class="mt-6 bg-tasty hover:bg-tasty-dark text-white btn btn-danger remove-btn">Удалить вопрос</div>
       </div>
-      <question></question>
+      <question>
+        <div class="mt-4 alert alert-danger d-none question-alert" role="alert" style="animation: fadeIn 0.7s;">
+          Перед продолжением создайте выберите тип вопроса или удалите его, если он лишний.
+        </div>
+      </question>
     </div>`);
 
     // Создаем переключение типа вопроса
@@ -90,6 +94,9 @@ document.addEventListener('DOMContentLoaded', function() {
     const question_name_description_html = `
       <div class="line mt-4 mb-2"></div>
       <div>
+        <div class="alert alert-danger d-none question-alert" role="alert" style="animation: fadeIn 0.7s;">
+          Перед продолжением заполните абсолютно все поля вопроса.
+        </div>
         <label class="ml-2 mt-2 block fs-5 font-medium mb-1">Название вопроса</label>
         <input
           id="question-name"
@@ -186,7 +193,6 @@ document.addEventListener('DOMContentLoaded', function() {
   // Система шагов
   const steps = document.querySelectorAll('.step');
   const stepContents = document.querySelectorAll('.step-content');
-  const nextButtons = document.querySelectorAll('.step-next');
   const prevButtons = document.querySelectorAll('.step-prev');
   
   // Текущий шаг
@@ -219,15 +225,6 @@ document.addEventListener('DOMContentLoaded', function() {
   updateSteps();
   
   // Кнопки навигации
-  nextButtons.forEach(button => {
-    button.addEventListener('click', function() {
-      if (currentStep < steps.length - 1) {
-        currentStep++;
-        updateSteps();
-      }
-    });
-  });
-  
   prevButtons.forEach(button => {
     button.addEventListener('click', function() {
       if (currentStep > 0) {
@@ -237,9 +234,34 @@ document.addEventListener('DOMContentLoaded', function() {
     });
   });
 
+  // Кнопка перехода на страницу с создание вопросов
+  document.querySelector('.step-create-questions').addEventListener('click', function() {
+    if (currentStep < steps.length - 1) {
+      currentStep++;
+      updateSteps();
+      
+      const check_data = {};
+      check_data.name = document.getElementById('test-title').value;
+      check_data.description = document.getElementById('test-description').value;
+      check_data.direction = document.getElementById('test-category').value;
+
+      if (check_data.name == '' || check_data.description == '' || check_data.direction == '') { 
+        currentStep--;
+        updateSteps();
+        document.querySelector('.create-test-initialization-alert').classList.remove('d-none');
+      } else {
+        document.querySelector('.create-test-initialization-alert').classList.add('d-none');
+      }
+    }
+  });
+
   // Завершения создания теста
+  let server_response = {};
+
   document.querySelector('.step-create-test').addEventListener('click', function() {
     if (currentStep < steps.length - 1) {
+      var is_check_complite = true;
+
       currentStep++;
       updateSteps();
 
@@ -263,9 +285,15 @@ document.addEventListener('DOMContentLoaded', function() {
       questions_cards.forEach(card => {
         // Название, описание, тип каждого вопроса
         test_data.questions.push({});
-        test_data.questions.at(-1).name = card.querySelector('question').querySelector('#question-name').value;
-        test_data.questions.at(-1).description = card.querySelector('question').querySelector('#question-description').value;
-        test_data.questions.at(-1).type = card.querySelector('#question-type').value;
+        try {
+          test_data.questions.at(-1).name = card.querySelector('question').querySelector('#question-name').value;
+          test_data.questions.at(-1).description = card.querySelector('question').querySelector('#question-description').value;
+          test_data.questions.at(-1).type = card.querySelector('#question-type').value;
+        } catch(err) {
+          test_data.questions.at(-1).name = '';
+          test_data.questions.at(-1).description = '';
+          test_data.questions.at(-1).type = '';
+        }
 
         const type = test_data.questions.at(-1).type;
 
@@ -289,9 +317,11 @@ document.addEventListener('DOMContentLoaded', function() {
             });
           } else if (type == 'many_choice') {
             test_data.questions.at(-1).answer = [];
-            card.querySelector('question').querySelector('.answer-div').querySelectorAll('div').forEach(ans_div => {
-              if (ans_div.querySelector('input[type="checkbox"]') && ans_div.querySelector('input[type="checkbox"]').checked) {
-                test_data.questions.at(-1).answer.push(ans_div.querySelector('input[type="text"]').value);
+            card.querySelector('question').querySelector('.answer-div').querySelectorAll('div').forEach((ans_div, index) => {
+              if (index != 0) {
+                if (ans_div.querySelector('input[type="checkbox"]') && ans_div.querySelector('input[type="checkbox"]').checked) {
+                  test_data.questions.at(-1).answer.push(ans_div.querySelector('input[type="text"]').value);
+                }
               }
             });
           }
@@ -300,8 +330,67 @@ document.addEventListener('DOMContentLoaded', function() {
         }
       });
 
-
       console.log(test_data);
+
+      // Проверяем, что все поля заполненны
+      test_data.questions.forEach((quest, index) => {
+        if (Object.values(quest).some(value => (value === '' || value == [] || value == ['', '', '', '']))) {
+          is_check_complite = false;
+          questions_cards[index].querySelector('.question-alert').classList.remove('d-none');
+        } else {
+          questions_cards[index].querySelector('.question-alert').classList.add('d-none');
+        }
+      });
+      
+      // Проверка пройденна
+      if (is_check_complite) {
+        //test_data = JSON.stringify(test_data);
+        // ТУТ СДЕЛАТЬ ОТПРАВКУ И ПОЛУЧЕНИЕ ОТВЕТА
+        setTimeout(() => {
+          server_response = { "link": "test_solution.html?test=2" };
+          
+          // Да да, создание результатов через js (мне лень ес чесн, я усталл :( )
+          stepContents[currentStep].innerHTML = `
+            <div class="text-center mb-6">
+              <div class="inline-flex p-4 rounded-full bg-tasty/10 mb-4">
+                <span class="text-tasty text-4xl">✓</span>
+              </div>
+              <h2 class="text-xl font-bold mb-2">Тест успешно создан!</h2>
+              <p class="text-muted-foreground">
+                Ваш тест готов к использованию. Вы можете поделиться им или начать прохождение.
+              </p>
+            </div>
+            
+            <div class="bg-secondary/50 rounded-lg p-4 mb-6">
+              <h3 class="font-medium mb-2">Информация о тесте</h3>
+              <ul class="space-y-1 text-sm">
+                <li><span class="text-muted-foreground">Название:</span> ${test_data.name} </li>
+                <li><span class="text-muted-foreground">Категория:</span> ${test_data.direction} </li>
+                <li><span class="text-muted-foreground">Количество вопросов:</span> ${test_data.questions.length} </li>
+              </ul>
+            </div>
+            
+            <div class="flex flex-col sm:flex-row gap-4">
+              <a href="tests.html" class="w-full test-link-a">
+                <button class="w-full bg-tasty hover:bg-tasty-dark text-white btn btn-primary">
+                  Пройти тест
+                </button>
+              </a>
+              <!--<button class="w-full border-tasty text-tasty hover:bg-tasty/10 btn btn-outline">
+                Скопировать ссылку на тест
+              </button>-->
+            </div>
+          `;
+
+          // Кнопка перехода на созданный тест
+          document.querySelector('.test-link-a').addEventListener('click', function () {
+            this.href = server_response.link;
+          });
+        }, 500);
+      } else {
+        currentStep--;
+        updateSteps();
+      }
     }
   });
   

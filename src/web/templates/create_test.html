@@ -41,6 +41,10 @@
               <div class="p-6">
                 <!-- Шаг 1: Настройки -->
                 <div class="step-content active">
+                  <div class="alert alert-danger d-none create-test-initialization-alert" role="alert" style="animation: fadeIn 0.7s;">
+                    Перед продолжением заполните название, описание и категорию теста.
+                  </div>
+
                   <h2 class="text-xl font-bold mb-4">Настройки теста</h2>
                   <form class="space-y-4">
                     <div>
@@ -105,7 +109,7 @@
                   </form>
                   
                   <div class="mt-6 flex justify-end">
-                    <button class="bg-tasty hover:bg-tasty-dark text-white btn btn-primary step-next">
+                    <button class="bg-tasty hover:bg-tasty-dark text-white btn btn-primary step-create-questions">
                       Продолжить
                     </button>
                   </div>
@@ -140,40 +144,11 @@
                 
                 <!-- Шаг 3: Результат -->
                 <div class="step-content" style="display: none;">
-                  <div class="text-center mb-6">
-                    <div class="inline-flex p-4 rounded-full bg-tasty/10 mb-4">
-                      <span class="text-tasty text-4xl">✓</span>
-                    </div>
-                    <h2 class="text-xl font-bold mb-2">Тест успешно создан!</h2>
-                    <p class="text-muted-foreground">
-                      Ваш тест готов к использованию. Вы можете поделиться им или начать прохождение.
-                    </p>
-                  </div>
-                  
-                  <div class="bg-secondary/50 rounded-lg p-4 mb-6">
-                    <h3 class="font-medium mb-2">Информация о тесте</h3>
-                    <ul class="space-y-1 text-sm">
-                      <li><span class="text-muted-foreground">Название:</span> Тест по истории Древнего Рима</li>
-                      <li><span class="text-muted-foreground">Категория:</span> История</li>
-                      <li><span class="text-muted-foreground">Количество вопросов:</span> 10</li>
-                    </ul>
-                  </div>
-                  
-                  <div class="flex flex-col sm:flex-row gap-4">
-                    <a href="solve-test.html" class="w-full">
-                      <button class="w-full bg-tasty hover:bg-tasty-dark text-white btn btn-primary">
-                        Пройти тест
-                      </button>
-                    </a>
-                    <button class="w-full border-tasty text-tasty hover:bg-tasty/10 btn btn-outline">
-                      Поделиться
-                    </button>
-                  </div>
-                  
-                  <div class="mt-6 flex justify-start">
-                    <button class="border border-input hover:bg-muted text-foreground btn btn-outline step-prev">
-                      Назад
-                    </button>
+                  <h2 class="text-xl font-bold mb-2">Ждем создания теста...</h2>
+                  <div class="mb-8 d-flex justify-content-center response_wait-spinner"> 
+                    <div class="spinner-border text-warning w-16 h-16" role="status">
+                      <span class="visually-hidden">Loading...</span>
+                    </div> 
                   </div>
                 </div>
               </div>
