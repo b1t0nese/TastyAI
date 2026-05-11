@@ -384,7 +384,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
           // Кнопка перехода на созданный тест
           document.querySelector('.test-link-a').addEventListener('click', function () {
-            this.href = server_response.link;
+            this.href = `test_solution.html?test=${server_response.id}`;
           });
         });
       } else {
@@ -395,19 +395,8 @@ document.addEventListener('DOMContentLoaded', function() {
   });
   
   // Работа тумблеров ИИ
-  const use_ai_generate_questions_textarea = document.querySelector('textarea[id="use-ai-generate-questions"]');
   const use_ai_check_questions_textarea = document.querySelector('textarea[id="use-ai-check-questions"]');
-
-  const use_ai_generate_questions_switch = document.querySelector('input[id="use-ai-generate-questions"]');
   const use_ai_check_questions_switch = document.querySelector('input[id="use-ai-check-questions"]');
-
-  use_ai_generate_questions_switch.addEventListener('change', function () {
-    if (!this.checked) {
-      use_ai_generate_questions_textarea.classList.add('d-none');
-    } else {
-      use_ai_generate_questions_textarea.classList.remove('d-none');
-    }
-  });
 
   use_ai_check_questions_switch.addEventListener('change', function () {
     if (!this.checked) {
