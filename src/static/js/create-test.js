@@ -256,8 +256,6 @@ document.addEventListener('DOMContentLoaded', function() {
   });
 
   // Завершения создания теста
-  let server_response = {};
-
   document.querySelector('.step-create-test').addEventListener('click', function() {
     if (currentStep < steps.length - 1) {
       var is_check_complite = true;
@@ -330,8 +328,6 @@ document.addEventListener('DOMContentLoaded', function() {
         }
       });
 
-      console.log(test_data);
-
       // Проверяем, что все поля заполненны
       test_data.questions.forEach((quest, index) => {
         if (Object.values(quest).some(value => (value === '' || value == [] || value == ['', '', '', '']))) {
@@ -344,12 +340,16 @@ document.addEventListener('DOMContentLoaded', function() {
       
       // Проверка пройденна
       if (is_check_complite) {
-        //test_data = JSON.stringify(test_data);
-        // ТУТ СДЕЛАТЬ ОТПРАВКУ И ПОЛУЧЕНИЕ ОТВЕТА
-        setTimeout(() => {
-          server_response = { "link": "test_solution.html?test=2" };
-          
-          // Да да, создание результатов через js (мне лень ес чесн, я усталл :( )
+        fetch(`/api/save_test`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify(test_data)
+        })
+        .then(response => response.json())
+        .then(server_response => {          
+          // Да да, создание результатов через js
           stepContents[currentStep].innerHTML = `
             <div class="text-center mb-6">
               <div class="inline-flex p-4 rounded-full bg-tasty/10 mb-4">
@@ -386,7 +386,7 @@ document.addEventListener('DOMContentLoaded', function() {
           document.querySelector('.test-link-a').addEventListener('click', function () {
             this.href = server_response.link;
           });
-        }, 500);
+        });
       } else {
         currentStep--;
         updateSteps();
