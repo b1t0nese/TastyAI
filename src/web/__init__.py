@@ -24,10 +24,10 @@ def serve_html(filename):
     template_path = os.path.join(web_bp.template_folder, filename)
     if os.path.exists(template_path) and filename.endswith('.html'):
         try:
-            user_data = get_auth_session(request)
+            user_data, db_sess = get_auth_session(request)
             username = user_data.user.name
         except:
-            user_data, username = [], "Авторизация"
+            username = "Авторизация"
         return render_template(filename, username=username)
     else:
         abort(404)

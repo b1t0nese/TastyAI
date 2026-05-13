@@ -25,14 +25,13 @@ def get_auth_session(requestt, db_sess=None):
     if not auth:
         raise AuthException("Auth was not found")
     elif requestt.headers.get('User-Agent', '') != auth.user_agent:
-        print(requestt.headers.get('User-Agent', ''))
         raise AuthException("user_agent != Auth.user_agent")
     elif auth.logout_at is not None and dnow > auth.logout_at:
         raise AuthException("The session was completed.")
     auth.last_activity = dnow
     if not getted_db_sess:
         db_sess.commit()
-    return auth
+    return auth, db_sess
 
 
 
@@ -40,7 +39,7 @@ def get_auth_session(requestt, db_sess=None):
 def logout():
     db_sess = db_session.create_session()
     try:
-        auth = get_auth_session(request, db_sess)
+        auth, db_sess = get_auth_session(request, db_sess)
         auth.logout_at = auth.last_activity
         db_sess.commit()
         return "Successful exit.", 200
@@ -51,7 +50,7 @@ def logout():
 @api_bp.route('/who_am_i')
 def who_am_i():
     try:
-        auth = get_auth_session(request)
+        auth, db_sess = get_auth_session(request)
         return jsonify(auth.to_dict()), 200
     except Exception as e:
         return f"{e.__class__.__name__}: {e}", 403
@@ -159,7 +158,7 @@ def get_test():
         except: pass
         if start_attempt:
             try:
-                user_data = get_auth_session(request, db_sess).user
+                user_data = get_auth_session(request, db_sess)[0].user
             except:
                 user_data = None
             attempt = Attempt()
@@ -190,7 +189,7 @@ def solve_test():
     db_sess = db_session.create_session()
     try:
         try:
-            user_data = get_auth_session(request, db_sess).user
+            user_data = get_auth_session(request, db_sess)[0].user
         except:
             user_data = None
         response = tastyai.end_test(attempt_id, answers, db_sess, user_data, only_data)
@@ -213,7 +212,7 @@ def create_test():
 
     db_sess = db_session.create_session()
     try:
-        user_data = get_auth_session(request, db_sess).user
+        user_data = get_auth_session(request, db_sess)[0].user
         response = tastyai.save_test(test_data, user_data, db_sess)
         db_sess.commit()
         return jsonify(response), 200
