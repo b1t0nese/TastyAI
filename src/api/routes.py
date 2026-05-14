@@ -22,6 +22,7 @@ def get_auth_session(requestt, db_sess=None):
     session_token = requestt.cookies.get("session_token")
     dnow = datetime.datetime.now()
     auth = db_sess.query(Auth).filter(Auth.session_token==session_token).first()
+    print(auth)
     if not auth:
         raise AuthException("Auth was not found")
     elif requestt.headers.get('User-Agent', '') != auth.user_agent:
@@ -195,9 +196,12 @@ def solve_test():
         response = tastyai.end_test(attempt_id, answers, db_sess, user_data, only_data)
         db_sess.commit()
         return jsonify(response), 200
+    except AuthException as e:
+        return redirect(url_for('web.sign', error_type='auth_error', message=f"{e.__class__.__name__}: {e}"))
     except Exception as e:
+        return f"{e.__class__.__name__}: {e}", 403
+    finally:
         db_sess.close()
-        return f"{e.__class__.__name__}: {e}", 500
 
 
 @api_bp.route("/save_test", methods=["POST"])
@@ -216,6 +220,9 @@ def create_test():
         response = tastyai.save_test(test_data, user_data, db_sess)
         db_sess.commit()
         return jsonify(response), 200
+    except AuthException as e:
+        return redirect(url_for('web.sign', error_type='auth_error', message=f"{e.__class__.__name__}: {e}"))
     except Exception as e:
-        db_sess.close()
         return f"{e.__class__.__name__}: {e}", 403
+    finally:
+        db_sess.close()
