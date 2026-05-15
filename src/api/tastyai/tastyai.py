@@ -8,11 +8,11 @@ import os
 from ..db_manager.__all_models import *
 from .deep_api import dpsk
 
-
 load_dotenv()
-with open(os.path.join(os.path.dirname(__file__), "dpsk_prompt.txt"), "r", encoding="utf-8") as f:
+with open(
+    os.path.join(os.path.dirname(__file__), "dpsk_prompt.txt"), "r", encoding="utf-8"
+) as f:
     dpsk_prompt = f.read()
-
 
 
 def lower_answer(answer):
@@ -27,7 +27,6 @@ def nospace_answer(answer):
         return list(map(lambda x: x.replace(" ", ""), answer))
     else:
         return answer.replace(" ", "")
-
 
 
 def check_test_by_keys(questions: list, answers: list):
@@ -47,12 +46,18 @@ def check_test_by_keys(questions: list, answers: list):
             if "many_answers" in actions:
                 is_correct = user_answer in quest_answer
             else:
-                is_correct = user_answer==quest_answer
-        elif questions[i]["type"]=="many_choice":
-            is_correct = sorted(answers[i])==sorted(questions[i]["answer"])
-        description = "Правильно." if is_correct else f"Неправильно. Правильный ответ: {
+                is_correct = user_answer == quest_answer
+        elif questions[i]["type"] == "many_choice":
+            is_correct = sorted(answers[i]) == sorted(questions[i]["answer"])
+        description = (
+            "Правильно."
+            if is_correct
+            else f"Неправильно. Правильный ответ: {
             ", ".join(questions[i]["answer"]) if isinstance(questions[i]["answer"], list) else questions[i]["answer"]}"
-        attempt_answers.append({"answer": answers[i], "is_correct": is_correct, "description": description})
+        )
+        attempt_answers.append(
+            {"answer": answers[i], "is_correct": is_correct, "description": description}
+        )
     verdict = f"""Результат: {len(list(filter(lambda x: x["is_correct"], attempt_answers)))}/{len(questions)}
 {"\n".join([f"Вопрос №{i+1}: {"" if attempt_answers[i]["is_correct"] else "не"}правильно" for i in range(len(attempt_answers))])}"""
     return json.dumps(attempt_answers), verdict
@@ -66,8 +71,13 @@ def check_test_by_ai(test: dict, user_answers: list):
     return json.dumps(ai_response["answers"]), ai_response["verdict"]
 
 
-
-def end_test(attempt_id: int, answers: list, db_sess: Session, user_data: User=None, only_data: bool=False):
+def end_test(
+    attempt_id: int,
+    answers: list,
+    db_sess: Session,
+    user_data: User = None,
+    only_data: bool = False,
+):
     attempt = db_sess.query(Attempt).filter(Attempt.id == attempt_id).first()
     if not attempt:
         raise AttemptException(f"attempt {attempt_id} was not found")
@@ -84,9 +94,9 @@ def end_test(attempt_id: int, answers: list, db_sess: Session, user_data: User=N
             raise TestException("answers lenght != test questions lenght.")
         attempt.finished_at = datetime.datetime.now()
 
-        if test.verdict_type=="key":
+        if test.verdict_type == "key":
             attempt.answers, attempt.verdict = check_test_by_keys(questions, answers)
-        elif test.verdict_type=="ai":
+        elif test.verdict_type == "ai":
             attempt.answers, attempt.verdict = check_test_by_ai(test.to_dict(), answers)
         else:
             raise AttemptException(f"verdict_type {test.verdict_type} is not defined")
@@ -94,7 +104,6 @@ def end_test(attempt_id: int, answers: list, db_sess: Session, user_data: User=N
     result = attempt.to_dict(["test", "user_id"])
     result["answers"] = json.loads(result["answers"])
     return result
-
 
 
 def save_test(test_data: dict, user: User, db_sess: Session):
@@ -110,7 +119,11 @@ def save_test(test_data: dict, user: User, db_sess: Session):
     test.questions = json.dumps(test_data["questions"])
     test.verdict_type = test_data.get("verdict_type", "key")
     test.prompt = test_data.get("prompt")
-    direction = db_sess.query(Direction).filter(Direction.direction == test_data.get("direction")).first()
+    direction = (
+        db_sess.query(Direction)
+        .filter(Direction.direction == test_data.get("direction"))
+        .first()
+    )
     if not direction:
         direction = Direction(direction=test_data.get("direction"))
         db_sess.add(direction)

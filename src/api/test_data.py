@@ -5,7 +5,7 @@ import json, os
 DB_PATH = os.path.join(os.path.dirname(__file__), "db")
 db_session.global_init(os.path.join(DB_PATH, "db.sqlite3"))
 
-with open(os.path.join(DB_PATH, "test_data(tests).json"), 'r', encoding='utf-8') as f:
+with open(os.path.join(DB_PATH, "test_data(tests).json"), "r", encoding="utf-8") as f:
     data = json.load(f)
 
 db_sess = db_session.create_session()
@@ -18,7 +18,11 @@ for test_data in data:
     test.verdict_type = test_data["verdict_type"]
     test.prompt = test_data["prompt"]
 
-    direction = db_sess.query(Direction).filter(Direction.direction == test_data["direction"]).first()
+    direction = (
+        db_sess.query(Direction)
+        .filter(Direction.direction == test_data["direction"])
+        .first()
+    )
     if not direction:
         direction = Direction(direction=test_data["direction"])
         db_sess.add(direction)
